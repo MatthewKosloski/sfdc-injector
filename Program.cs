@@ -25,6 +25,7 @@ namespace SFDCInjector
             SFDCClient client = CreateSFDCClient();
             client.RequestAccessToken().Wait();
             Console.WriteLine(client.AccessToken);
+            Console.WriteLine(client.InstanceUrl);
         }
     }
 }
