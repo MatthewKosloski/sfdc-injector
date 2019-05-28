@@ -24,6 +24,13 @@ namespace SFDCInjector {
 
         public string InstanceUrl { get; set; }
 
+        private static readonly HttpClient client;
+
+        static SFDCClient()
+        {
+            client = new HttpClient();
+        }
+
         private FormUrlEncodedContent CreateHttpContent()
         {
             return new FormUrlEncodedContent(
@@ -49,23 +56,19 @@ namespace SFDCInjector {
 
         public async Task RequestAccessToken()
         {
-
-            using(HttpClient client = new HttpClient())
+            try
             {
-                try
-                {
-                    HttpResponseMessage res = await client.PostAsync(this.LoginEndpoint, CreateHttpContent());
-                    string resString = await res.Content.ReadAsStringAsync();
-                    AccessTokenResponseBody resObj = CreateAccessTokenResponseBody(resString);
-                    this.AccessToken = resObj.AccessToken;
-                    this.InstanceUrl = resObj.InstanceUrl;
-                    res.EnsureSuccessStatusCode();
-                }
-                catch(HttpRequestException e)
-                {
-                    Console.WriteLine("\nException thrown!");
-                    Console.WriteLine(e.Message);
-                }
+                HttpResponseMessage res = await client.PostAsync(this.LoginEndpoint, CreateHttpContent());
+                string resString = await res.Content.ReadAsStringAsync();
+                AccessTokenResponseBody resObj = CreateAccessTokenResponseBody(resString);
+                this.AccessToken = resObj.AccessToken;
+                this.InstanceUrl = resObj.InstanceUrl;
+                res.EnsureSuccessStatusCode();
+            }
+            catch(HttpRequestException e)
+            {
+                Console.WriteLine("\nException thrown!");
+                Console.WriteLine(e.Message);
             }
         }
 
