@@ -1,12 +1,31 @@
 ﻿using System;
+using System.Configuration; 
+using System.Threading.Tasks;
 
-namespace sfdc_injector
+namespace SFDCInjector
 {
     class Program
     {
-        static void Main(string[] args)
+
+        private static SFDCClient CreateSFDCClient() 
         {
-            Console.WriteLine("Hello World!");
+            var appSettings = ConfigurationManager.AppSettings;
+            return new SFDCClient 
+            {
+                LoginEndpoint = appSettings["LoginEndpoint"],
+                ApiEndpoint = appSettings["ApiEndpoint"],
+                ClientId = appSettings["ClientId"],
+                ClientSecret = appSettings["ClientSecret"],
+                Username = appSettings["Username"],
+                Password = appSettings["Password"]
+            };
+        }
+
+        public static void Main(string[] args)
+        {
+            SFDCClient client = CreateSFDCClient();
+            client.RequestAccessToken().Wait();
+            Console.WriteLine(client.AccessToken);
         }
     }
 }
