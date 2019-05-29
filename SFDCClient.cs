@@ -82,19 +82,16 @@ namespace SFDCInjector {
             }
         }
 
-        public async Task InjectEvent()
+        public async Task InjectEvent(IPlatformEvent<IPlatformEventFields> evt)
         {
             try
             {
-                Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", "Data_Center_Status__e");
+                Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.API_NAME);
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri(reqUri));
                 req.Headers.Add("Authorization", $"Bearer {this.AccessToken}");
                 req.Headers.Add("Accept", "application/json");
 
-                string json = SerializeTypeToJson(new DataCenterStatusEvent {
-                    StatusCode = 201,
-                    DataCenterId = "a032E00000xzevTQAQ"
-                });
+                string json = SerializeTypeToJson(evt.Fields);
                 req.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 HttpResponseMessage res = await _client.SendAsync(req);

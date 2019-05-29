@@ -1,4 +1,29 @@
-﻿using System;
+﻿/*
+
+public interface IChild
+{
+}
+
+public interface IParent<TChild> where TChild : IChild
+{
+    List<TChild> a { get; set; } 
+}
+
+public class ChildA : IChild {  }   
+
+public class ChildB : IChild {  }   
+
+public class ParentA : IParent<ChildA>
+{
+    public List<ChildA> a { get; set; }
+}
+
+public class ParentB : IParent<ChildB>
+{
+    public List<ChildB> a { get; set; }
+}
+ */
+using System;
 using System.Configuration; 
 
 namespace SFDCInjector
@@ -24,7 +49,15 @@ namespace SFDCInjector
         {
             SFDCClient client = CreateSFDCClient();
             client.RequestAccessToken().Wait();
-            client.InjectEvent().Wait();
+
+            IPlatformEvent<IPlatformEventFields> evt = (IPlatformEvent<IPlatformEventFields>) new DataCenterStatusEvent<DataCenterStatusEventFields> {
+                Fields = new DataCenterStatusEventFields {
+                    StatusCode = 500,
+                    DataCenterId = "a032E00000xzevTQAQ"
+                }
+            };
+
+            client.InjectEvent(evt).Wait();
         }
     }
 }
