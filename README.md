@@ -52,3 +52,4 @@ Follow the below instructions to use this application on your computer.
 - [ConfigurationManager Class](https://docs.microsoft.com/en-us/dotnet/api/system.configuration.configurationmanager?view=netframework-4.8)
 - [Serialize and Deserialize JSON data](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-serialize-and-deserialize-json-data)
 - [Documenting code with XML](https://docs.microsoft.com/en-us/dotnet/csharp/codedoc)
+- [Flurl HTTP library](https://flurl.dev/)
