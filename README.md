@@ -2,6 +2,31 @@
 
 This is a CLI console application built with .Net core that publishes events to Salesforce.
 
+## Prerequisites
+
+Before using this application, please complete the following software and Salesforce configuration prerequisites.
+
+### Software Prerequisites
+
+Please download the following software before using this application.
+
+- [.Net Core](https://dotnet.microsoft.com/download)
+
+### Salesforce Configuration Prerequisites
+
+Before using this application, you must create a connected app in your Salesforce development org:
+
+1. From `Setup`, search for `"app manager"` in the `Quick Find` search box.
+2. Click on `Apps > App Manager`.
+3. Click on `New Connected App`.
+4. Give your app a `Connected App Name`, `API Name`, and `Contact Email`.
+5. Make sure `Enable OAuth Settings` is checked.
+6. Make sure `Enable for Device Flow` is checked.
+7. Make sure the `Callback URL` is `https://login.salesforce.com/services/oauth2/success`.
+8. Select the `"Access and manage your data (api)"` OAuth Scope is selected.
+9. Make sure `Require Secret for Web Server Flow` is checked.
+10. Take note of your `Consumer Key` and `Consumer Secret`.  Copy and paste these into `App.config`.
+
 ## Usage
 
 Follow the below instructions to use this application on your computer.
