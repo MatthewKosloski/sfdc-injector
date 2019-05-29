@@ -2,14 +2,24 @@ using System.Runtime.Serialization;
 
 namespace SFDCInjector
 {
-    [DataContract]
-    public class DataCenterStatusEvent {
+  
+    public class DataCenterStatusEvent<DataCenterStatusEventFields>: IPlatformEvent<DataCenterStatusEventFields> {
 
-        [DataMember(Name="Status_Code__c")]
-        public int StatusCode { get; set; }
+        public DataCenterStatusEventFields Fields { get; set; }
 
-        [DataMember(Name="Data_Center_Id__c")]
-        public string DataCenterId { get; set; }
+        private string _API_NAME;
 
+        public string API_NAME
+        {
+            get
+            {
+                return _API_NAME;
+            }
+        }
+
+        public DataCenterStatusEvent()
+        {
+            this._API_NAME = "Data_Center_Status__e";
+        }
     }
 }
