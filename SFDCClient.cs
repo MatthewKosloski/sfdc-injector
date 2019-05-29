@@ -44,6 +44,17 @@ namespace SFDCInjector {
             return obj;
         }
 
+        // Serializes an instance of Type T into a JSON string.
+        private static string SerializeTypeToJson<T>(T obj) where T : class
+        {
+            MemoryStream stream = new MemoryStream();  
+            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));  
+            serializer.WriteObject(stream, obj);  
+            byte[] json = stream.ToArray();  
+            stream.Close();  
+            return Encoding.UTF8.GetString(json, 0, json.Length);  
+        }
+
         public async Task RequestAccessToken()
         {
             try
@@ -79,8 +90,13 @@ namespace SFDCInjector {
                 HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri(reqUri));
                 req.Headers.Add("Authorization", $"Bearer {this.AccessToken}");
                 req.Headers.Add("Accept", "application/json");
-                string json = "{\"Status_Code__c\":\"995\",\"Data_Center_Id__c\":\"a032E00000xzevTQAQ\"}";
+
+                string json = SerializeTypeToJson(new DataCenterStatusEvent {
+                    StatusCode = 201,
+                    DataCenterId = "a032E00000xzevTQAQ"
+                });
                 req.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                
                 HttpResponseMessage res = await _client.SendAsync(req);
                 string resString = await res.Content.ReadAsStringAsync();
                 InjectEventResponseBody resObj = DeserializeJsonToType<InjectEventResponseBody>(resString);
