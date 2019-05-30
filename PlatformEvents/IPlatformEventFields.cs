@@ -1,4 +1,4 @@
-namespace SFDCInjector
+namespace SFDCInjector.PlatformEvents
 {
     public interface IPlatformEventFields
     {

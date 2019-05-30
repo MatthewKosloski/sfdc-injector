@@ -1,6 +1,6 @@
 using System.Runtime.Serialization;
 
-namespace SFDCInjector
+namespace SFDCInjector.ResponseBodies
 {
     [DataContract]
     public class AccessTokenResponseBody 

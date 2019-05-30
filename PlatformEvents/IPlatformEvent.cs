@@ -1,4 +1,4 @@
-namespace SFDCInjector
+namespace SFDCInjector.PlatformEvents
 {
     public interface IPlatformEvent<TFields> where TFields : IPlatformEventFields
     {

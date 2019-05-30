@@ -1,6 +1,6 @@
 using System;
 
-namespace SFDCInjector
+namespace SFDCInjector.Exceptions
 {
     public class EventInjectionUnsuccessfulException : Exception
     {

@@ -2,7 +2,7 @@ using System.IO;
 using System.Text;
 using System.Runtime.Serialization.Json;
 
-namespace SFDCInjector
+namespace SFDCInjector.Utils
 {
     public class SerializerDeserializer
     {

@@ -5,6 +5,10 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using Flurl;
+using SFDCInjector.Exceptions;
+using SFDCInjector.PlatformEvents;
+using SFDCInjector.ResponseBodies;
+using SFDCInjector.Utils;
 
 namespace SFDCInjector 
 {
