@@ -1,15 +1,14 @@
 using System;
-using System.IO;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
-using System.Runtime.Serialization.Json;
 using Flurl;
 
-namespace SFDCInjector {
-    public class SFDCClient {
+namespace SFDCInjector 
+{
+    public class SFDCClient 
+    {
         public string LoginEndpoint { get; set; }
 
         public string ApiEndpoint { get; set; }
@@ -33,28 +32,6 @@ namespace SFDCInjector {
             _client = new HttpClient();
         }
 
-        // Deserializes a JSON string into an instance of T.
-        private static T DeserializeJsonToType<T>(string json) where T : class, new()
-        {
-            T obj = new T();
-            MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
-            obj = serializer.ReadObject(stream) as T;
-            stream.Close();
-            return obj;
-        }
-
-        // Serializes an instance of Type T into a JSON string.
-        private static string SerializeTypeToJson<T>(T obj)
-        {
-            MemoryStream stream = new MemoryStream();  
-            DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));  
-            serializer.WriteObject(stream, obj);  
-            byte[] json = stream.ToArray();  
-            stream.Close();  
-            return Encoding.UTF8.GetString(json, 0, json.Length);  
-        }
-
         public async Task RequestAccessToken()
         {
             try
@@ -70,7 +47,7 @@ namespace SFDCInjector {
                 );
                 HttpResponseMessage res = await _client.PostAsync(this.LoginEndpoint, httpContent);
                 string resString = await res.Content.ReadAsStringAsync();
-                AccessTokenResponseBody resObj = DeserializeJsonToType<AccessTokenResponseBody>(resString);
+                AccessTokenResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<AccessTokenResponseBody>(resString);
                 this.AccessToken = resObj.AccessToken;
                 this.InstanceUrl = resObj.InstanceUrl;
                 res.EnsureSuccessStatusCode();
@@ -91,12 +68,12 @@ namespace SFDCInjector {
                 req.Headers.Add("Authorization", $"Bearer {this.AccessToken}");
                 req.Headers.Add("Accept", "application/json");
 
-                string json = SerializeTypeToJson(evt.Fields);
+                string json = SerializerDeserializer.SerializeTypeToJson(evt.Fields);
                 req.Content = new StringContent(json, Encoding.UTF8, "application/json");
                 
                 HttpResponseMessage res = await _client.SendAsync(req);
                 string resString = await res.Content.ReadAsStringAsync();
-                InjectEventResponseBody resObj = DeserializeJsonToType<InjectEventResponseBody>(resString);
+                InjectEventResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<InjectEventResponseBody>(resString);
                 Console.WriteLine($"{resObj.Id} {resObj.Success}");
                 res.EnsureSuccessStatusCode();
             }
