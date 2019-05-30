@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using Flurl;
 
@@ -64,14 +65,18 @@ namespace SFDCInjector
             try
             {
                 Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.API_NAME);
-                HttpRequestMessage req = new HttpRequestMessage(HttpMethod.Post, new Uri(reqUri));
-                req.Headers.Add("Authorization", $"Bearer {this.AccessToken}");
-                req.Headers.Add("Accept", "application/json");
-
-                string json = SerializerDeserializer.SerializeTypeToJson(evt.Fields);
-                req.Content = new StringContent(json, Encoding.UTF8, "application/json");
+                string json = SerializerDeserializer.SerializeTypeToJson<TEventFields>(evt.Fields);
                 
-                HttpResponseMessage res = await _client.SendAsync(req);
+                HttpResponseMessage res = await _client.SendAsync(new HttpRequestMessage {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(reqUri),
+                    Content = new StringContent(json, Encoding.UTF8, "application/json"),
+                    Headers = {
+                        {"Authorization", $"Bearer {this.AccessToken}"},
+                        {"Accept", "application/json"}
+                    }
+                });
+
                 string resString = await res.Content.ReadAsStringAsync();
                 InjectEventResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<InjectEventResponseBody>(resString);
                 Console.WriteLine($"{resObj.Id} {resObj.Success}");
