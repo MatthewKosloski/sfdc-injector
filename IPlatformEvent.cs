@@ -2,10 +2,10 @@ using System.Collections.Generic;
 
 namespace SFDCInjector
 {
-    public interface IPlatformEvent<IPlatformEventFields>
+    public interface IPlatformEvent<TFields> where TFields : IPlatformEventFields
     {
         string API_NAME { get; }
 
-        IPlatformEventFields Fields { get; set; }
+        TFields Fields { get; set; }
     }
 }

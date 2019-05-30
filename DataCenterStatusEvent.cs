@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 namespace SFDCInjector
 {
   
-    public class DataCenterStatusEvent<DataCenterStatusEventFields>: IPlatformEvent<DataCenterStatusEventFields> {
+    public class DataCenterStatusEvent: IPlatformEvent<DataCenterStatusEventFields> {
 
         public DataCenterStatusEventFields Fields { get; set; }
 

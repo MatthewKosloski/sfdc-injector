@@ -45,7 +45,7 @@ namespace SFDCInjector {
         }
 
         // Serializes an instance of Type T into a JSON string.
-        private static string SerializeTypeToJson<T>(T obj) where T : class
+        private static string SerializeTypeToJson<T>(T obj)
         {
             MemoryStream stream = new MemoryStream();  
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));  
@@ -82,7 +82,7 @@ namespace SFDCInjector {
             }
         }
 
-        public async Task InjectEvent(IPlatformEvent<IPlatformEventFields> evt)
+        public async Task InjectEvent<TEventFields>(IPlatformEvent<TEventFields> evt) where TEventFields : IPlatformEventFields
         {
             try
             {
