@@ -77,14 +77,29 @@ namespace SFDCInjector
                     }
                 });
 
+                res.EnsureSuccessStatusCode();
+
                 string resString = await res.Content.ReadAsStringAsync();
                 InjectEventResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<InjectEventResponseBody>(resString);
-                Console.WriteLine($"{resObj.Id} {resObj.Success}");
-                res.EnsureSuccessStatusCode();
+
+                bool eventInjectionDidFail = !resObj.Success;
+                if(eventInjectionDidFail)
+                {
+                    throw new EventInjectionUnsuccessfulException(
+                        $"Failed to inject event {resObj.Id} into Salesforce.");
+                } 
+                else 
+                {
+                    Console.WriteLine($"Successfully injected a(n) {evt.API_NAME} event.");
+                    Console.WriteLine($"Returned Id From Salesforce: {resObj.Id}");
+                }
             }
             catch(HttpRequestException e)
             {
-                Console.WriteLine("\nException thrown!");
+                Console.WriteLine(e.Message);
+            }
+            catch(EventInjectionUnsuccessfulException e)
+            {
                 Console.WriteLine(e.Message);
             }
         }
