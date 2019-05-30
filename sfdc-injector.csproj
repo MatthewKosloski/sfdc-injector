@@ -2,8 +2,8 @@
   <ItemGroup>
     <PackageReference Include="System.Runtime.Serialization.Json" Version="4.3.0" />
     <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
-    <PackageReference Include="System.Runtime.Serialization.Primitives" Version="4.3.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="4.6.0-preview5.19224.8" />
+    <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="Flurl.Http" Version="2.4.2" />
   </ItemGroup>
 

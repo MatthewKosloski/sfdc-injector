@@ -1,4 +1,8 @@
-﻿using System.Configuration; 
+﻿using System;
+using System.Configuration; 
+using SFDCInjector.PlatformEvents;
+using CommandLine;
+using System.Collections;
 
 namespace SFDCInjector
 {
@@ -21,17 +25,26 @@ namespace SFDCInjector
 
         public static void Main(string[] args)
         {
-            SFDCClient client = CreateSFDCClient();
-            client.RequestAccessToken().Wait();
-
-            DataCenterStatusEvent evt1 = new DataCenterStatusEvent {
-                Fields = new DataCenterStatusEventFields {
-                    StatusCode = 500,
-                    DataCenterId = "a032E00000xzevTQAQ"
+            Parser.Default.ParseArguments<Options>(args)
+            .WithParsed<Options>(o =>
+            {
+                if (o.Verbose)
+                {
+                    Console.WriteLine($"Verbose output enabled. Current Arguments: -v {o.Verbose}");
+                    Console.WriteLine("Quick Start Example! App is in Verbose mode!");
                 }
-            };
-
-            client.InjectEvent(evt1).Wait();
+                else
+                {
+                    Console.WriteLine($"Current Arguments: -v {o.Verbose}");
+                    Console.WriteLine("Quick Start Example!");
+                }
+            });
         }
+    }
+
+    public class Options
+    {
+        [Option('v', "verbose", Required = false, HelpText = "Set output to verbose messages.")]
+        public bool Verbose { get; set; }
     }
 }
