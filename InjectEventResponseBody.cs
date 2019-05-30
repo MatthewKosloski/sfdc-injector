@@ -3,7 +3,8 @@ using System.Runtime.Serialization;
 namespace SFDCInjector
 {
     [DataContract]
-    public class InjectEventResponseBody {
+    public class InjectEventResponseBody 
+    {
 
         [DataMember(Name="id")]
         public string Id { get; set; }

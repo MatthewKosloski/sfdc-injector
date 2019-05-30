@@ -3,7 +3,8 @@ using System.Runtime.Serialization;
 namespace SFDCInjector
 {
     [DataContract]
-    public class AccessTokenResponseBody {
+    public class AccessTokenResponseBody 
+    {
 
         [DataMember(Name="access_token")]
         public string AccessToken { get; set; }
