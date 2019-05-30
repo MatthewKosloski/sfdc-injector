@@ -78,3 +78,5 @@ Follow the below instructions to use this application on your computer.
 - [Serialize and Deserialize JSON data](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-serialize-and-deserialize-json-data)
 - [Documenting code with XML](https://docs.microsoft.com/en-us/dotnet/csharp/codedoc)
 - [Flurl HTTP library](https://flurl.dev/)
+- [Best Practices for Exceptions](https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)
+- [Command Line Parser](https://github.com/commandlineparser/commandline)
