@@ -14,10 +14,6 @@ namespace SFDCInjector
 {
     public class SFDCClient 
     {
-        public string LoginEndpoint { get; set; }
-
-        public string ApiEndpoint { get; set; }
-
         public string Username { get; set; }
 
         public string Password { get; set; }
@@ -30,11 +26,30 @@ namespace SFDCInjector
 
         public string InstanceUrl { get; set; }
 
+        public string ApiEndpoint {
+            get => _apiEndpoint;
+        }
+
+        public double ApiVersion {
+            get => _apiVersion;
+            set {
+                _apiVersion = value;
+                _apiEndpoint = $"/services/data/v{value.ToString("0.0")}/";
+            }
+        }
+
+        public static readonly string loginEndpoint;
+
         private static readonly HttpClient _client;
+
+        private string _apiEndpoint;
+
+        private double _apiVersion;
 
         static SFDCClient()
         {
             _client = new HttpClient();
+            loginEndpoint = "https://login.salesforce.com/services/oauth2/token";
         }
 
         public async Task RequestAccessToken()
@@ -50,7 +65,7 @@ namespace SFDCInjector
                         {"password", this.Password}
                     }
                 );
-                HttpResponseMessage res = await _client.PostAsync(this.LoginEndpoint, httpContent);
+                HttpResponseMessage res = await _client.PostAsync(loginEndpoint, httpContent);
                 string resString = await res.Content.ReadAsStringAsync();
                 AccessTokenResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<AccessTokenResponseBody>(resString);
                 this.AccessToken = resObj.AccessToken;
