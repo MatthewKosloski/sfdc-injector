@@ -1,10 +1,10 @@
-namespace SFDCInjector.PlatformEvents
+namespace SFDCInjector.PlatformEvents.DataCenter
 {
   
-    public class DataCenterStatus: IPlatformEvent<DataCenterStatusFields> 
+    public class DataCenterStatusEvent: IPlatformEvent<DataCenterStatusEventFields> 
     {
 
-        public DataCenterStatusFields Fields { get; set; }
+        public DataCenterStatusEventFields Fields { get; set; }
 
         private string _API_NAME;
 
@@ -16,7 +16,7 @@ namespace SFDCInjector.PlatformEvents
             }
         }
 
-        public DataCenterStatus()
+        public DataCenterStatusEvent()
         {
             this._API_NAME = "Data_Center_Status__e";
         }

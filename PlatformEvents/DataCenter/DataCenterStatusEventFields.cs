@@ -1,9 +1,9 @@
 using System.Runtime.Serialization;
 
-namespace SFDCInjector.PlatformEvents
+namespace SFDCInjector.PlatformEvents.DataCenter
 {
     [DataContract]
-    public class DataCenterStatusFields : IPlatformEventFields
+    public class DataCenterStatusEventFields : IPlatformEventFields
     {
         
         [DataMember(Name="Status_Code__c")]
