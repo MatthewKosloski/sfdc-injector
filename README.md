@@ -80,3 +80,4 @@ Follow the below instructions to use this application on your computer.
 - [Flurl HTTP library](https://flurl.dev/)
 - [Best Practices for Exceptions](https://docs.microsoft.com/en-us/dotnet/standard/exceptions/best-practices-for-exceptions)
 - [Command Line Parser](https://github.com/commandlineparser/commandline)
+- [C# Coding Standards and Naming Conventions](https://github.com/ktaranov/naming-convention/blob/master/C%23%20Coding%20Standards%20and%20Naming%20Conventions.md)
