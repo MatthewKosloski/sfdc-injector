@@ -7,7 +7,7 @@ namespace SFDCInjector
     {
         public static void Main(string[] args)
         {
-            CommandLine.Parser.Default.ParseArguments<Options>(args)
+            Parser.Default.ParseArguments<Options>(args)
             .WithParsed<Options>(o => Controller.Init(o));
         }
     }
