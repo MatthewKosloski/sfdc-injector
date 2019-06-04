@@ -101,7 +101,7 @@ namespace SFDCInjector.Utils
             
             return IsTrimmedStringEmpty(replacement) 
                 ? original 
-                : Convertions.StringToDouble(replacement);
+                : Conversions.StringToDouble(replacement);
         }
 
     }
