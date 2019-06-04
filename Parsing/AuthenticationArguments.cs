@@ -1,5 +1,6 @@
 using System.Configuration; 
 using System.Diagnostics;
+using System.Collections.Generic;
 using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
 using System;
@@ -35,12 +36,13 @@ namespace SFDCInjector.Parsing
 
                 if(hasAppConfig)
                 {
-                    bool hasMissingSettings = 
-                        Helpers.IsTrimmedStringEmpty(appSettings[_ClientIdConfigKey]) ||
-                        Helpers.IsTrimmedStringEmpty(appSettings[_ClientSecretConfigKey]) ||
-                        Helpers.IsTrimmedStringEmpty(appSettings[_UsernameConfigKey]) ||
-                        Helpers.IsTrimmedStringEmpty(appSettings[_PasswordConfigKey]) ||
-                        Helpers.IsTrimmedStringEmpty(appSettings[_ApiConfigKey]);
+                    bool hasMissingSettings = Helpers.HasEmptyTrimmedString(new List<string> {
+                        appSettings[_ClientIdConfigKey],
+                        appSettings[_ClientSecretConfigKey],
+                        appSettings[_UsernameConfigKey],
+                        appSettings[_PasswordConfigKey],
+                        appSettings[_ApiConfigKey]
+                    });
                     
                     bool hasValidAppConfig = hasAppConfig && !hasMissingSettings;
                     bool hasInvalidAppConfig = hasAppConfig && hasMissingSettings;
@@ -52,7 +54,7 @@ namespace SFDCInjector.Parsing
                         ClientSecret = appSettings[_ClientSecretConfigKey];
                         Username = appSettings[_UsernameConfigKey];
                         Password = appSettings[_PasswordConfigKey];
-                        ApiVersion = Convertions.StringToDouble(appSettings[_ApiConfigKey],
+                        ApiVersion = Conversions.StringToDouble(appSettings[_ApiConfigKey],
                         "Could not parse ApiVersion. Please check App.config to make sure the value" + 
                         " of ApiVersion conforms to the requirements of a double.");
                     }

@@ -7,38 +7,45 @@ using SFDCInjector.Exceptions;
 
 namespace SFDCInjector.Parsing
 {
-    public class Controller
+    public static class Controller
     {
         private static AuthenticationArguments SetAuthArgs(IEnumerable<string> cliArgs)
         {
-            AuthenticationArguments args = new AuthenticationArguments();
+            AuthenticationArguments authArgs = new AuthenticationArguments();
             
             List<string> cliArgsList = new List<string>();
             foreach(string arg in cliArgs)
                 cliArgsList.Add(arg.Trim());
 
-            bool hasCliArgs = cliArgsList.Count != 0;
-            bool hasTooManyArgs = cliArgsList.Count > 5;
+            bool hasNoAppConfig = ConfigurationManager.AppSettings.Count == 0;
+            bool hasMissingCliArgs = Helpers.HasEmptyTrimmedString(cliArgsList);
 
-            if(hasCliArgs)
+            if(hasNoAppConfig && hasMissingCliArgs)
             {
-                if(hasTooManyArgs)
-                {
-                    throw new Exception("Too many authentication arguments have been provided.");
-                }
-                else
-                {
-                    foreach(string arg in cliArgsList)
-                        Console.WriteLine($"\"{arg}\"");
-                }
+                throw new MissingAppConfigException("There is no App.config and not all authentication " + 
+                "arguments have been provided.  Please provide all authentication arguments.");
+            } 
+            else
+            {
+                authArgs.ClientId = Helpers.KeepOriginalIfEmptyReplacement(authArgs.ClientId, cliArgsList[0]);
+                authArgs.ClientSecret = Helpers.KeepOriginalIfEmptyReplacement(authArgs.ClientSecret, cliArgsList[1]);
+                authArgs.Username = Helpers.KeepOriginalIfEmptyReplacement(authArgs.Username, cliArgsList[2]);
+                authArgs.Password = Helpers.KeepOriginalIfEmptyReplacement(authArgs.Password, cliArgsList[3]);
+                authArgs.ApiVersion = Helpers.KeepOriginalIfEmptyReplacement(authArgs.ApiVersion, cliArgsList[4]);
             }
 
-            return args;
+            return authArgs;
         }
 
         public static void Init(Options o)
         {
             AuthenticationArguments authArgs = SetAuthArgs(o.AuthArgs);
+
+            Console.WriteLine($"ClientId: {authArgs.ClientId}");
+            Console.WriteLine($"ClientSecret: {authArgs.ClientSecret}");
+            Console.WriteLine($"Username: {authArgs.Username}");
+            Console.WriteLine($"Password: {authArgs.Password}");
+            Console.WriteLine($"ApiVersion: {authArgs.ApiVersion}");
         }
     }
 }
