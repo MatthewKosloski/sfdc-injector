@@ -6,6 +6,12 @@ using System;
 
 namespace SFDCInjector.Parsing
 {
+    /// <summary>
+    /// Holds the values of the authentication arguments. 
+    /// Upon instantiation, it attempts to read authentication
+    /// arguments from App.config. If no App.config exists, 
+    /// then the properties are Null.
+    /// </summary>
     public class AuthenticationArguments
     {
         public string ClientId { get; set; }
@@ -13,10 +19,6 @@ namespace SFDCInjector.Parsing
         public string Username { get; set; }
         public string Password { get; set; }
         public double ApiVersion { get; set; }
-        public bool HasAppConfig { get; }
-        public bool HasMissingSettings { get; }
-        public bool HasValidAppConfig { get => HasAppConfig && !HasMissingSettings; }
-        public bool HasInvalidAppConfig { get => HasAppConfig && HasMissingSettings; }
         private static readonly string _ClientIdConfigKey = "ClientId";
         private static readonly string _ClientSecretConfigKey = "ClientSecret";
         private static readonly string _UsernameConfigKey = "Username";
@@ -29,18 +31,21 @@ namespace SFDCInjector.Parsing
             {
                 var appSettings = ConfigurationManager.AppSettings;
                 
-                HasAppConfig = appSettings.Count != 0;
+                bool hasAppConfig = appSettings.Count != 0;
 
-                if(HasAppConfig)
+                if(hasAppConfig)
                 {
-                    HasMissingSettings = 
+                    bool hasMissingSettings = 
                         Helpers.IsTrimmedStringEmpty(appSettings[_ClientIdConfigKey]) ||
                         Helpers.IsTrimmedStringEmpty(appSettings[_ClientSecretConfigKey]) ||
                         Helpers.IsTrimmedStringEmpty(appSettings[_UsernameConfigKey]) ||
                         Helpers.IsTrimmedStringEmpty(appSettings[_PasswordConfigKey]) ||
                         Helpers.IsTrimmedStringEmpty(appSettings[_ApiConfigKey]);
+                    
+                    bool hasValidAppConfig = hasAppConfig && !hasMissingSettings;
+                    bool hasInvalidAppConfig = hasAppConfig && hasMissingSettings;
 
-                    if(HasValidAppConfig)
+                    if(hasValidAppConfig)
                     {
                         // Set default args to values found in App.config
                         ClientId = appSettings[_ClientIdConfigKey];
@@ -51,16 +56,16 @@ namespace SFDCInjector.Parsing
                         "Could not parse ApiVersion. Please check App.config to make sure the value" + 
                         " of ApiVersion conforms to the requirements of a double.");
                     }
-                    else if(HasInvalidAppConfig)
+                    else if(hasInvalidAppConfig)
                     {
                         throw new InvalidAppConfigException("One or more authentication settings " + 
                         "are missing from App.config.");
                     }
                 }
             }
-            catch(ConfigurationErrorsException)
+            catch(ConfigurationErrorsException e)
             {
-                Console.WriteLine("Encountered an error while reading App.config.");
+                Console.WriteLine($"{e.GetType()}: Encountered an error while reading App.config.");
                 Console.WriteLine(new StackTrace(true).ToString());
             }
             catch(InvalidAppConfigException e)
