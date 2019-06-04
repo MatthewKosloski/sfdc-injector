@@ -6,7 +6,8 @@ namespace SFDCInjector.Parsing
 {
     public class Options 
     {
-        [Option('a', "authenticate", Separator = ':', Required = true, HelpText = "Authenticate with SFDC.")]
+        [Option('a', "authenticate", Min = 5, Separator = ':', 
+        Required = true, HelpText = "Authenticate with SFDC.")]
         public IEnumerable<string> AuthArgs { get; set; }
 
         [Option('i', "inject", Separator = ':', Required = true, HelpText = "Inject event into SFDC.")]
@@ -18,7 +19,7 @@ namespace SFDCInjector.Parsing
             get
             {
                 return new List<Example>() {
-                    new Example("Authenticate with Salesforce via Username-Password Flow", new Options { 
+                    new Example("To override all settings in App.config, supply all arguments", new Options { 
                         AuthArgs = new List<string> {
                             "CliendId",
                             "ClientSecret",
@@ -26,6 +27,12 @@ namespace SFDCInjector.Parsing
                             "Password",
                             "ApiVersion"
                         }
+                    }),
+                    new Example("To override some App.config settings (e.g., username and password) and keep the rest", new Options { 
+                        AuthArgs = new List<string> {"", "", "Username", "Password", ""}
+                    }),
+                    new Example("To just use the App.config settings", new Options { 
+                        AuthArgs = new List<string> {"", "", "", "", ""}
                     })
                 };
             }
