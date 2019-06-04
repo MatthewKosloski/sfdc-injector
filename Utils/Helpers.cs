@@ -1,6 +1,8 @@
 using System;
 using System.Diagnostics;
 using System.Configuration;
+using SFDCInjector.Utils;
+using System.Collections.Generic;
 
 namespace SFDCInjector.Utils
 {
@@ -17,26 +19,7 @@ namespace SFDCInjector.Utils
     {
         
         /// <summary>
-        /// Returns a boolean indicating if one or more App.config values 
-        /// associated with the provided keys is Null or Empty.
-        /// </summary>
-        // public static bool hasMissingSetting(string[] keys)
-        // {
-
-        //     var appSettings = ConfigurationManager.AppSettings;
-        //     bool result = false;
-
-        //     try
-        //     {
-
-        //     }
-        //     catch(Con)
-
-        //     return result;
-        // }
-
-        /// <summary>
-        /// Returns a boolean indicating if the provided string argument,
+        /// Returns a boolean indicating if `str`,
         /// after being trimmed, is Empty.  
         /// </summary>
         /// <example>
@@ -50,45 +33,76 @@ namespace SFDCInjector.Utils
         /// </example>
         public static bool IsTrimmedStringEmpty(string str)
         {
-            bool result = true;
-            try
+            if(str == null) str = "";
+            return String.IsNullOrEmpty(str.Trim());
+        }
+
+        /// <summary>
+        /// Loops through a list of strings and returns a boolean 
+        /// indicating if the list contains a trimmed, empty string.
+        /// </summary>
+        /// <example>
+        /// <code>
+        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", null}); // True
+        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", ""}); // True
+        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", " "}); // True
+        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", "c"}); // False
+        /// </code>
+        /// </example>
+        public static bool HasEmptyTrimmedString(List<string> strs)
+        {
+            bool result = false;
+
+            foreach(string str in strs)
             {
-                result = String.IsNullOrEmpty(str.Trim());
+                if (IsTrimmedStringEmpty(str))
+                {
+                    result = true;
+                    break;
+                }
             }
-            catch(NullReferenceException)
-            {
-                Console.WriteLine("Argument cannot be null.");
-                Console.WriteLine(new StackTrace(true).ToString());
-            }
+
             return result;
         }
 
         /// <summary>
-        /// Returns the original argument if replacement, after being trimmed, 
-        /// is Empty; otherwise returns the replacement argument.  
+        /// Returns `original` if `replacement`, after being trimmed, 
+        /// is Empty; otherwise returns `replacement`.
+        /// <example>
+        /// <code>
+        /// KeepOriginalIfEmptyReplacement("i am original", null); // "i am original"
+        /// KeepOriginalIfEmptyReplacement("i am original", ""); // "i am original"
+        /// KeepOriginalIfEmptyReplacement("i am original", " "); // "i am original"
+        /// KeepOriginalIfEmptyReplacement("i am original", "i am the replacement"); // "i am the replacement"
+        /// </code>  
+        /// </example>
         /// </summary>
-        public static string KeepOriginalIfEmpty(string original, string replacement)
+        public static string KeepOriginalIfEmptyReplacement(string original, string replacement)
         {
-            string result = "";
-
-            try
-            {
-                result = IsTrimmedStringEmpty(replacement) ? original : replacement;
-            }
-            catch(NullReferenceException e)
-            {
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Make sure the replacement argument is not null.");
-                Console.WriteLine(new StackTrace(true).ToString());
-            }
-
-            return result;
+            if(replacement == null) replacement = "";
+            return IsTrimmedStringEmpty(replacement) ? original : replacement;
         }
 
-        // public static double KeepDefaultIfNoReplacement(double dfault, double replacement)
-        // {
-
-        // }
+        /// <summary>
+        /// Returns `original` if `replacement`, after being trimmed, 
+        /// is Empty; otherwise returns `replacement`.
+        /// <example>
+        /// <code>
+        /// KeepOriginalIfEmptyReplacement(3.14, null); // 3.14
+        /// KeepOriginalIfEmptyReplacement(3.14, ""); // 3.14
+        /// KeepOriginalIfEmptyReplacement(3.14, " "); // 3.14
+        /// KeepOriginalIfEmptyReplacement(3.14, "2.178"); // 2.178
+        /// </code>  
+        /// </example>
+        /// </summary>
+        public static double KeepOriginalIfEmptyReplacement(double original, string replacement)
+        {
+            if(replacement == null) replacement = "";
+            
+            return IsTrimmedStringEmpty(replacement) 
+                ? original 
+                : Convertions.StringToDouble(replacement);
+        }
 
     }
 }
