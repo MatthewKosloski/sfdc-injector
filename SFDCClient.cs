@@ -84,7 +84,7 @@ namespace SFDCInjector
         {
             try
             {
-                Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.API_NAME);
+                Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.ApiName);
                 string json = SerializerDeserializer.SerializeTypeToJson<TEventFields>(evt.Fields);
                 
                 HttpResponseMessage res = await _Client.SendAsync(new HttpRequestMessage {
@@ -111,7 +111,7 @@ namespace SFDCInjector
                 } 
                 else 
                 {
-                    Console.WriteLine($"Successfully injected a(n) {evt.API_NAME} event.");
+                    Console.WriteLine($"Successfully injected a(n) {evt.ApiName} event.");
                     Console.WriteLine($"Returned Id From Salesforce: {resObj.Id}");
                 }
             }

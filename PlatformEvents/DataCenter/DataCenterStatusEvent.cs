@@ -6,19 +6,13 @@ namespace SFDCInjector.PlatformEvents.DataCenter
 
         public DataCenterStatusEventFields Fields { get; set; }
 
-        private string _API_NAME;
+        private string _ApiName;
 
-        public string API_NAME
-        {
-            get
-            {
-                return _API_NAME;
-            }
-        }
+        public string ApiName { get => _ApiName; }
 
         public DataCenterStatusEvent()
         {
-            this._API_NAME = "Data_Center_Status__e";
+            this._ApiName = "Data_Center_Status__e";
         }
     }
 }
