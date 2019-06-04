@@ -68,7 +68,8 @@ namespace SFDCInjector
                 );
                 HttpResponseMessage res = await _client.PostAsync(loginEndpoint, httpContent);
                 string resString = await res.Content.ReadAsStringAsync();
-                AccessTokenResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<AccessTokenResponseBody>(resString);
+                AccessTokenResponseBody resObj = SerializerDeserializer
+                .DeserializeJsonToType<AccessTokenResponseBody>(resString);
                 this.AccessToken = resObj.AccessToken;
                 this.InstanceUrl = resObj.InstanceUrl;
                 res.EnsureSuccessStatusCode();
@@ -80,7 +81,8 @@ namespace SFDCInjector
             }
         }
 
-        public async Task InjectEvent<TEventFields>(IPlatformEvent<TEventFields> evt) where TEventFields : IPlatformEventFields
+        public async Task InjectEvent<TEventFields>(IPlatformEvent<TEventFields> evt) 
+        where TEventFields : IPlatformEventFields
         {
             try
             {
@@ -100,7 +102,8 @@ namespace SFDCInjector
                 res.EnsureSuccessStatusCode();
 
                 string resString = await res.Content.ReadAsStringAsync();
-                InjectEventResponseBody resObj = SerializerDeserializer.DeserializeJsonToType<InjectEventResponseBody>(resString);
+                InjectEventResponseBody resObj = SerializerDeserializer
+                .DeserializeJsonToType<InjectEventResponseBody>(resString);
 
                 bool eventInjectionDidFail = !resObj.Success;
                 if(eventInjectionDidFail)
