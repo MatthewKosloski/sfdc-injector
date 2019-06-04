@@ -27,30 +27,28 @@ namespace SFDCInjector
 
         public string InstanceUrl { get; set; }
 
-        public string ApiEndpoint {
-            get => _apiEndpoint;
-        }
+        public string ApiEndpoint { get => _ApiEndpoint; }
 
         public double ApiVersion {
-            get => _apiVersion;
+            get => _ApiVersion;
             set {
-                _apiVersion = value;
-                _apiEndpoint = $"/services/data/v{value.ToString("0.0")}/";
+                _ApiVersion = value;
+                _ApiEndpoint = $"/services/data/v{value.ToString("0.0")}/";
             }
         }
 
-        public static readonly string loginEndpoint;
+        private static readonly string _LoginEndpoint;
 
-        private static readonly HttpClient _client;
+        private static readonly HttpClient _Client;
 
-        private string _apiEndpoint;
+        private string _ApiEndpoint;
 
-        private double _apiVersion;
+        private double _ApiVersion;
 
         static SFDCClient()
         {
-            _client = new HttpClient();
-            loginEndpoint = "https://login.salesforce.com/services/oauth2/token";
+            _Client = new HttpClient();
+            _LoginEndpoint = "https://login.salesforce.com/services/oauth2/token";
         }
 
         public async Task RequestAccessToken()
@@ -66,7 +64,7 @@ namespace SFDCInjector
                         {"password", this.Password}
                     }
                 );
-                HttpResponseMessage res = await _client.PostAsync(loginEndpoint, httpContent);
+                HttpResponseMessage res = await _Client.PostAsync(_LoginEndpoint, httpContent);
                 string resString = await res.Content.ReadAsStringAsync();
                 AccessTokenResponseBody resObj = SerializerDeserializer
                 .DeserializeJsonToType<AccessTokenResponseBody>(resString);
@@ -89,7 +87,7 @@ namespace SFDCInjector
                 Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.API_NAME);
                 string json = SerializerDeserializer.SerializeTypeToJson<TEventFields>(evt.Fields);
                 
-                HttpResponseMessage res = await _client.SendAsync(new HttpRequestMessage {
+                HttpResponseMessage res = await _Client.SendAsync(new HttpRequestMessage {
                     Method = HttpMethod.Post,
                     RequestUri = new Uri(reqUri),
                     Content = new StringContent(json, Encoding.UTF8, "application/json"),
