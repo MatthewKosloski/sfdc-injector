@@ -3,7 +3,11 @@ using System.Diagnostics;
 
 namespace SFDCInjector.Utils
 {
-    public class Convertions
+
+    /// <summary>
+    /// Contains utility methods that convert between types.
+    /// </summary>
+    public static class Conversions
     {
         public static double StringToDouble(string str, 
         string formatErr = "Unable to parse string to double due to malformed argument.")
