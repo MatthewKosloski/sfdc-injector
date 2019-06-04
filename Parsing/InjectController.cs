@@ -7,7 +7,7 @@ using SFDCInjector.Exceptions;
 
 namespace SFDCInjector.Parsing
 {
-    public static class Controller
+    public static class InjectController
     {
         private static AuthenticationArguments SetAuthArgs(IEnumerable<string> cliArgs)
         {
@@ -37,7 +37,7 @@ namespace SFDCInjector.Parsing
             return authArgs;
         }
 
-        public static void Init(Options o)
+        public static int Init(InjectOptions o)
         {
             AuthenticationArguments authArgs = SetAuthArgs(o.AuthArgs);
 
@@ -46,6 +46,8 @@ namespace SFDCInjector.Parsing
             Console.WriteLine($"Username: {authArgs.Username}");
             Console.WriteLine($"Password: {authArgs.Password}");
             Console.WriteLine($"ApiVersion: {authArgs.ApiVersion}");
+
+            return 0;
         }
     }
 }
