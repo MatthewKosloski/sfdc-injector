@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Diagnostics;
 using Flurl;
 using SFDCInjector.Exceptions;
 using SFDCInjector.PlatformEvents;
@@ -74,8 +75,8 @@ namespace SFDCInjector
             }
             catch(HttpRequestException e)
             {
-                Console.WriteLine("\nException thrown!");
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"{e.GetType()}: {e.Message}");
+                Console.WriteLine(new StackTrace(true).ToString());
             }
         }
 
@@ -115,11 +116,13 @@ namespace SFDCInjector
             }
             catch(HttpRequestException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"{e.GetType()}: {e.Message}");
+                Console.WriteLine(new StackTrace(true).ToString())
             }
             catch(EventInjectionUnsuccessfulException e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine($"{e.GetType()}: {e.Message}");
+                Console.WriteLine(new StackTrace(true).ToString())
             }
         }
 
