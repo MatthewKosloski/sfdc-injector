@@ -1,4 +1,5 @@
 using SFDCInjector.PlatformEvents;
+using SFDCInjector.Attributes;
 using System.Diagnostics;
 using System;
 using System.Reflection;
@@ -61,5 +62,63 @@ namespace SFDCInjector
             return evt;
         }
 
+        /// <summary>
+        /// Gets the property names of `TEventFields` that use 
+        /// the `CommandLineArgumentIndexAttribute`.  The position of
+        /// the property in the array corresponds to the integer supplied
+        /// to the attribute.
+        /// </summary>
+        /// <remarks>
+        /// Below is an example of its usage.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// public class MyEventFields : IPlatformEventFields
+        /// {
+        ///     [CommandLineArgumentIndex(1)]
+        ///     public string SomeEventField { get; set; }
+        ///     [CommandLineArgumentIndex(0)]
+        ///     public string AnotherEventField { get; set; }
+        /// }
+        /// ...
+        /// string[] props = GetEventCliProperties&lt;MyEventFields&gt;(); 
+        /// // {"AnotherEventField", "SomeEventField"}
+        /// </code>
+        /// </example>
+        public static string[] GetEventCliProperties<TEventFields>() 
+        where TEventFields : IPlatformEventFields
+        {
+            Type eventFieldsType = typeof(TEventFields);
+            PropertyInfo[] properties = eventFieldsType.GetProperties();
+
+            string[] eventCliProperties = new string[properties.Length];
+
+            try
+            {
+                foreach(PropertyInfo property in properties)
+                {
+                    object[] attributes = property.GetCustomAttributes(true);
+                    foreach(Attribute attribute in attributes)
+                    {
+                        bool isCliArgIndexAttribute = attribute.GetType() == 
+                        typeof(CommandLineArgumentIndexAttribute);
+                        if(isCliArgIndexAttribute)
+                        {
+                            var cliArgIndexAttribute = (CommandLineArgumentIndexAttribute) attribute;
+                            eventCliProperties[cliArgIndexAttribute.Index] = property.Name;
+                        }
+                    }
+                }
+            }
+            catch(IndexOutOfRangeException e)
+            {
+                Console.WriteLine($"{e.GetType()}: Failed to add one or more properties to the array. " + 
+                "Ensure every occurence of CommandLineArgumentIndexAttribute has an integer that is less than " + 
+                "or equal to the total number of properties in the class.");
+                Console.WriteLine(new StackTrace(true).ToString());
+            }
+
+            return eventCliProperties;
+        }
     }
 }
