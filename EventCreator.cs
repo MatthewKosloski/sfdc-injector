@@ -120,5 +120,30 @@ namespace SFDCInjector
 
             return eventCliProperties;
         }
+
+        /// <summary>
+        /// Uses Reflection to dynamically set the value of property 
+        /// `propName` on `evtFields` to `propValue`.
+        /// </summary>
+        /// <remarks>
+        /// Below is an example of its usage.
+        /// </remarks>
+        /// <example>
+        /// <code>
+        /// MyEventFields evtFields = new MyEventFields();
+        /// evtFields = SetEventFieldsProperty(evtFields, "MyProperty", 3.14);
+        /// Console.WriteLine(evtFields.MyProperty); // 3.14
+        /// </code>
+        /// </example>
+        public static TEventFields SetEventFieldsProperty<TEventFields>(
+            TEventFields evtFields, string propName, object propValue)
+        where TEventFields : IPlatformEventFields
+        {
+            Type evtType = typeof(TEventFields);
+            PropertyInfo propInfo = evtType.GetProperty(propName);
+            propInfo.SetValue(evtFields, propValue);
+            return evtFields;
+        }
+
     }
 }
