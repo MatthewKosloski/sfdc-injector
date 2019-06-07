@@ -37,7 +37,8 @@ namespace SFDCInjector
         /// CreateEvent("DataCenter.DataCenterNameEvent", "DataCenter.DataCenterNameEventFields");
         /// </code>
         /// </example>
-        public static dynamic CreateEvent(string eventClassName, string eventFieldsClassName)
+        public static dynamic CreateEvent(string eventClassName, string eventFieldsClassName, 
+        object[] eventFieldsPropValues)
         {
             dynamic evt = null;
 
@@ -46,11 +47,27 @@ namespace SFDCInjector
 
             try
             {
-                Type typeParameter = Type.GetType(eventFieldsClassName);
-                MethodInfo mi = typeof(EventCreator).GetMethod("CreateEventInstance");
-                MethodInfo miConstructed = mi.MakeGenericMethod(typeParameter);
-                object[] methodArgs = {eventClassName, eventFieldsClassName};
-                evt = miConstructed.Invoke(null, methodArgs);
+                Type eventFieldsType = Type.GetType(eventFieldsClassName);
+                Type classType = typeof(EventCreator);
+
+                MethodInfo miCreateEventInstance = classType.GetMethod("CreateEventInstance");
+                MethodInfo miCreateEventInstanceConstructed = miCreateEventInstance.MakeGenericMethod(eventFieldsType);
+                
+                MethodInfo miGetEventCliProperties = classType.GetMethod("GetEventCliProperties");
+                MethodInfo miGetEventCliPropertiesConstructed = miGetEventCliProperties.MakeGenericMethod(eventFieldsType);
+
+                evt = miCreateEventInstanceConstructed.Invoke(null, new object[] {
+                    eventClassName, eventFieldsClassName});
+                
+                var evtFieldsPropNames = (string[]) miGetEventCliPropertiesConstructed.Invoke(null, 
+                    new object[]{});
+
+                for(int i = 0; i < evtFieldsPropNames.Length; i++)
+                {
+                    evt.Fields = EventCreator.SetEventFieldsProperty(evt.Fields, 
+                    evtFieldsPropNames[i], eventFieldsPropValues[i]);
+                }
+
                 
             }
             catch (ArgumentNullException e)
