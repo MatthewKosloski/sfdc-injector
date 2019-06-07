@@ -11,7 +11,7 @@ using SFDCInjector.PlatformEvents;
 using SFDCInjector.ResponseBodies;
 using SFDCInjector.Utils;
 
-namespace SFDCInjector 
+namespace SFDCInjector.Core
 {
 
     /// <summary>

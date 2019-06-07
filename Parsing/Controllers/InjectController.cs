@@ -5,6 +5,7 @@ using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
 using SFDCInjector.Parsing.Arguments;
 using SFDCInjector.Parsing.Options;
+using SFDCInjector.Core;
 
 namespace SFDCInjector.Parsing.Controllers
 {

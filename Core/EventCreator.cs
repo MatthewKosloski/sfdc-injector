@@ -5,7 +5,7 @@ using System;
 using System.Reflection;
 using System.Collections.Generic;
 
-namespace SFDCInjector
+namespace SFDCInjector.Core
 {
     /// <summary>
     /// Facilitates the dynamic creation of Platform Events via Reflection.
