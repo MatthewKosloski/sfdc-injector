@@ -13,6 +13,10 @@ using SFDCInjector.Utils;
 
 namespace SFDCInjector 
 {
+
+    /// <summary>
+    /// Handles communication with Salesforce's REST API.
+    /// </summary>
     public class SFDCClient 
     {
         public string Username { get; set; }
@@ -51,6 +55,11 @@ namespace SFDCInjector
             _LoginEndpoint = "https://login.salesforce.com/services/oauth2/token";
         }
 
+        /// <summary>
+        /// Uses a username and password to request an access token and instance url
+        /// by making a POST request to the Salesforce token request endpoint. 
+        /// <seealso cref="SFDCInjector.InjectEvent()"/>
+        /// </summary>
         public async Task RequestAccessToken()
         {
             try
@@ -79,6 +88,17 @@ namespace SFDCInjector
             }
         }
 
+        /// <summary>
+        /// Injects an event into Salesforce at the 
+        /// `/services/data/vXX.0/sobjects/Event_Api_Name__e/` endpoint, 
+        /// where `XX.0` is `ApiVersion` and `Event_Api_Name__e` is the event's
+        /// `ApiName` property.
+        /// <exception cref="SFDCInjector.Exceptions.EventInjectionUnsuccessfulException">
+        /// Thrown when the Success property on the response body is false.
+        /// </exception>
+        /// <param name="evt">The event to be injected.</param>
+        /// <typeparam name="TEventFields">The data type of the event's fields.</typeparam>
+        /// </summary>
         public async Task InjectEvent<TEventFields>(IPlatformEvent<TEventFields> evt) 
         where TEventFields : IPlatformEventFields
         {
