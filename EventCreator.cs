@@ -3,6 +3,7 @@ using SFDCInjector.Attributes;
 using System.Diagnostics;
 using System;
 using System.Reflection;
+using System.Collections.Generic;
 
 namespace SFDCInjector
 {
@@ -34,11 +35,11 @@ namespace SFDCInjector
         /// </summary>
         /// <example>
         /// <code>
-        /// CreateEvent("DataCenter.DataCenterNameEvent", "DataCenter.DataCenterNameEventFields");
+        /// CreateEvent("DataCenter.DataCenterNameEvent", "DataCenter.DataCenterNameEventFields", new List&lt;object&gt;{"foo", "123"});
         /// </code>
         /// </example>
         public static dynamic CreateEvent(string eventClassName, string eventFieldsClassName, 
-        object[] eventFieldsPropValues)
+        List<object> eventFieldsPropValues)
         {
             dynamic evt = null;
 
