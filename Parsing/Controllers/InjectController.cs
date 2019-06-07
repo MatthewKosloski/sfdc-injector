@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System;
 using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
-using SFDCInjector.Parsing;
+using SFDCInjector.Parsing.Arguments;
+using SFDCInjector.Parsing.Options;
 
-namespace SFDCInjector.Parsing
+namespace SFDCInjector.Parsing.Controllers
 {
     /// <summary>
     /// Responsible for carrying out initialization actions 

@@ -5,7 +5,7 @@ using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
 using System;
 
-namespace SFDCInjector.Parsing
+namespace SFDCInjector.Parsing.Arguments
 {
     /// <summary>
     /// Holds the values of the authentication arguments. 

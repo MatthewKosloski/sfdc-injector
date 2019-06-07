@@ -1,5 +1,6 @@
 ﻿using CommandLine;
-using SFDCInjector.Parsing;
+using SFDCInjector.Parsing.Controllers;
+using SFDCInjector.Parsing.Options;
 
 namespace SFDCInjector
 {

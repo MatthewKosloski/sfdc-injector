@@ -2,7 +2,7 @@ using CommandLine;
 using CommandLine.Text;
 using System.Collections.Generic;
 
-namespace SFDCInjector.Parsing
+namespace SFDCInjector.Parsing.Options
 {
     [Verb("inject", HelpText = "Inject an event into SFDC (Salesforce).")] 
     public class InjectOptions 

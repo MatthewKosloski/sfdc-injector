@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SFDCInjector.Parsing
+namespace SFDCInjector.Parsing.Arguments
 {
     public class EventArguments
     {

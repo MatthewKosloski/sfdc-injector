@@ -1,7 +1,7 @@
 using System;
-using SFDCInjector.Parsing;
+using SFDCInjector.Parsing.Options;
 
-namespace SFDCInjector.Parsing
+namespace SFDCInjector.Parsing.Controllers
 {
     public class AboutController
     {
