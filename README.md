@@ -65,10 +65,10 @@ To run the tests, change your directory to `SFDCInjector.Tests` and use this com
 dotnet test
 ```
 
-To generate a code coverage report in the aforementioned directory, run `dotnet test` with a `-p` flag:
+To generate code coverage report files in a `SFDCInjector.Tests/coverage` directory, run:
 
 ```
-dotnet test -p:CollectCoverage=true
+dotnet test -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,lcov\" -p:CoverletOutput='./coverage/'
 ```
 
 ## Resources
