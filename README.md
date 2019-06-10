@@ -57,6 +57,19 @@ Follow the below instructions to use this application on your computer.
     ```
     dotnet run
     ```
+## Testing
+
+To run the tests, change your directory to `SFDCInjector.Tests` and use this command:
+
+```
+dotnet test
+```
+
+To generate a code coverage report in the aforementioned directory, run `dotnet test` with a `-p` flag:
+
+```
+dotnet test -p:CollectCoverage=true
+```
 
 ## Resources
 
