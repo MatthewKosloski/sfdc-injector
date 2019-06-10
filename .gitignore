@@ -3,4 +3,4 @@ obj
 .vscode
 .DS_Store
 *.config
-coverage.json
+coverage
