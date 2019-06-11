@@ -60,6 +60,32 @@ namespace SFDCInjector.Core
         }
 
         /// <summary>
+        /// The query parameters used in the request for an access token.
+        /// </summary>
+        private Dictionary<string, string> GetAccessTokenQueryParams()
+        {
+            return new Dictionary<string, string> {
+                {"grant_type", "password"},
+                {"client_id", this.ClientId},
+                {"client_secret", this.ClientSecret},
+                {"username", this.Username},
+                {"password", this.Password}
+            };
+        }
+
+        /// <summary>
+        /// Produces a string of the query parameters used in the
+        /// request for an access token.
+        /// </summary>
+        private string GetAccessTokenQueryParamsString()
+        {
+            string str = "";
+            foreach(KeyValuePair<string, string> kvp in GetAccessTokenQueryParams())
+                str += $"{kvp.Key}: {kvp.Value}\n";
+            return str.Trim();
+        }
+
+        /// <summary>
         /// Uses a username and password to request an access token and instance url
         /// by making a POST request to the Salesforce token request endpoint. 
         /// <seealso cref="SFDCInjector.InjectEvent()"/>
@@ -68,15 +94,7 @@ namespace SFDCInjector.Core
         {
             try
             {
-                FormUrlEncodedContent httpContent = new FormUrlEncodedContent(
-                    new Dictionary<string, string> {
-                        {"grant_type", "password"},
-                        {"client_id", this.ClientId},
-                        {"client_secret", this.ClientSecret},
-                        {"username", this.Username},
-                        {"password", this.Password}
-                    }
-                );
+                FormUrlEncodedContent httpContent = new FormUrlEncodedContent(GetAccessTokenQueryParams());
                 HttpResponseMessage res = await _Client.PostAsync(_LoginEndpoint, httpContent);
                 string resString = await res.Content.ReadAsStringAsync();
                 AccessTokenResponseBody resObj = SerializerDeserializer
@@ -89,8 +107,13 @@ namespace SFDCInjector.Core
             }
             catch(HttpRequestException e)
             {
+                Console.WriteLine("Failed to get an access token from the Salesforce request endpoint.");
+                Console.WriteLine("Provided query parameters:");
+                Console.WriteLine(GetAccessTokenQueryParams());
+                Console.WriteLine("Request endpoint:");
+                Console.WriteLine(_LoginEndpoint);
                 Console.WriteLine($"{e.GetType()}: {e.Message}");
-                Console.WriteLine(new StackTrace(true).ToString());
+                //Console.WriteLine(new StackTrace(true).ToString());
             }
         }
 
