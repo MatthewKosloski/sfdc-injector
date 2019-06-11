@@ -26,6 +26,9 @@ namespace SFDCInjector.Tests.Utils
                 new SystemStringList{"alpha", "beta", null},
                 new SystemStringList{"theta", "delta", ""},
                 new SystemStringList{"epsilon", "lambda", " "},
+                new SystemStringList{"epsilon", "lambda", "\t"},
+                new SystemStringList{"epsilon", "lambda", "\r"},
+                new SystemStringList{"epsilon", "lambda", "\n"},
                 new SystemStringList{"sigma", "pi", "    "}
             };
 
