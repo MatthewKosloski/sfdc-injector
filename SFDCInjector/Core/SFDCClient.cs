@@ -43,7 +43,7 @@ namespace SFDCInjector.Core
 
         private static readonly string _LoginEndpoint;
 
-        private static readonly HttpClient _Client;
+        private readonly HttpClient _Client;
 
         private string _ApiEndpoint;
 
@@ -51,8 +51,12 @@ namespace SFDCInjector.Core
 
         static SFDCClient()
         {
-            _Client = new HttpClient();
             _LoginEndpoint = "https://login.salesforce.com/services/oauth2/token";
+        }
+
+        public SFDCClient(HttpClient client)
+        {
+            _Client = client;
         }
 
         /// <summary>
@@ -77,8 +81,10 @@ namespace SFDCInjector.Core
                 string resString = await res.Content.ReadAsStringAsync();
                 AccessTokenResponseBody resObj = SerializerDeserializer
                 .DeserializeJsonToType<AccessTokenResponseBody>(resString);
+
                 this.AccessToken = resObj.AccessToken;
                 this.InstanceUrl = resObj.InstanceUrl;
+
                 res.EnsureSuccessStatusCode();
             }
             catch(HttpRequestException e)

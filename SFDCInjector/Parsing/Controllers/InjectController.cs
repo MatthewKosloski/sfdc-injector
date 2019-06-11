@@ -1,5 +1,6 @@
 using System.Configuration; 
 using System.Collections.Generic;
+using System.Net.Http;
 using System;
 using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
@@ -91,14 +92,14 @@ namespace SFDCInjector.Parsing.Controllers
         /// </summary>
         private SFDCClient CreateClient() 
         {
-            return new SFDCClient 
-            {
-                ClientId = _AuthArgs.ClientId,
-                ClientSecret = _AuthArgs.ClientSecret,
-                Username = _AuthArgs.Username,
-                Password = _AuthArgs.Password,
-                ApiVersion = _AuthArgs.ApiVersion
-            };
+            SFDCClient client = new SFDCClient(new HttpClient());
+            client.ClientId = _AuthArgs.ClientId;
+            client.ClientSecret = _AuthArgs.ClientSecret;
+            client.Username = _AuthArgs.Username;
+            client.Password = _AuthArgs.Password;
+            client.ApiVersion = _AuthArgs.ApiVersion;
+
+            return client;
         }
 
         /// <summary>
