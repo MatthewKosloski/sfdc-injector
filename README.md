@@ -96,3 +96,7 @@ dotnet test -p:CollectCoverage=true -p:CoverletOutputFormat=\"json,lcov\" -p:Cov
 - [C# Coding Standards and Naming Conventions](https://github.com/ktaranov/naming-convention/blob/master/C%23%20Coding%20Standards%20and%20Naming%20Conventions.md)
 - [Reflection](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/reflection)
 - [Attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/)
+
+### Testing
+- [Unit Testing Async Code](https://msdn.microsoft.com/en-us/magazine/dn818493.aspx)
+- [Naming Standards for Unit Tests](https://osherove.com/blog/2005/4/3/naming-standards-for-unit-tests.html)
