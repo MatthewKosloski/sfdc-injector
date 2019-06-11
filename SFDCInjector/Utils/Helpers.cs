@@ -51,18 +51,7 @@ namespace SFDCInjector.Utils
         /// </example>
         public static bool HasEmptyTrimmedString(List<string> strs)
         {
-            bool result = false;
-
-            foreach(string str in strs)
-            {
-                if (IsTrimmedStringEmpty(str))
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
+            return strs.Exists(str => IsTrimmedStringEmpty(str));
         }
 
         /// <summary>
