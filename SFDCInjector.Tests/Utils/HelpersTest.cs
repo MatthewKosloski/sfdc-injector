@@ -15,22 +15,6 @@ namespace SFDCInjector.Tests.Utils
     {
 
         /// <summary>
-        /// Tests the IsTrimmedStringEmpty method.
-        /// </summary>
-        [Test]
-        [TestCase(null, ExpectedResult = true)]
-        [TestCase("", ExpectedResult = true)]
-        [TestCase(" ", ExpectedResult = true)]
-        [TestCase("  ", ExpectedResult = true)]
-        [TestCase("foo", ExpectedResult = false)]
-        [TestCase("hello world", ExpectedResult = false)]  
-        [TestCase("   hello world   ", ExpectedResult = false)]  
-        public bool IsTrimmedStringEmptyTest(string str)
-        {
-            return Helpers.IsTrimmedStringEmpty(str);
-        }
-
-        /// <summary>
         /// Tests the HasEmptyTrimmedString method.
         /// </summary>
         [Test]

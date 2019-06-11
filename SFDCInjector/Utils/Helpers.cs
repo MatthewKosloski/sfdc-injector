@@ -17,29 +17,10 @@ namespace SFDCInjector.Utils
     /// </summary>
     public static class Helpers
     {
-        
-        /// <summary>
-        /// Returns a boolean indicating if `str`,
-        /// after being trimmed, is Empty.  
-        /// </summary>
-        /// <example>
-        /// <code>
-        /// IsTrimmedStringEmpty(null); // True
-        /// IsTrimmedStringEmpty(""); // True
-        /// IsTrimmedStringEmpty(" "); // True
-        /// IsTrimmedStringEmpty("hello"); // False
-        /// IsTrimmedStringEmpty(" hello "); // False
-        /// </code>
-        /// </example>
-        public static bool IsTrimmedStringEmpty(string str)
-        {
-            if(str == null) str = "";
-            return String.IsNullOrEmpty(str.Trim());
-        }
 
         /// <summary>
-        /// Loops through a list of strings and returns a boolean 
-        /// indicating if the list contains a trimmed, empty string.
+        /// Returns a boolean indicating if a list of strings 
+        /// contains one or more elements that are either null, empty, or whitespace.
         /// </summary>
         /// <example>
         /// <code>
@@ -51,7 +32,7 @@ namespace SFDCInjector.Utils
         /// </example>
         public static bool HasEmptyTrimmedString(List<string> strs)
         {
-            return strs.Exists(str => IsTrimmedStringEmpty(str));
+            return strs.Exists(str => String.IsNullOrWhiteSpace(str));
         }
 
         /// <summary>
@@ -68,8 +49,7 @@ namespace SFDCInjector.Utils
         /// </summary>
         public static string KeepOriginalIfEmptyReplacement(string original, string replacement)
         {
-            if(replacement == null) replacement = "";
-            return IsTrimmedStringEmpty(replacement) ? original : replacement;
+            return String.IsNullOrWhiteSpace(replacement) ? original : replacement;
         }
 
         /// <summary>
@@ -85,10 +65,8 @@ namespace SFDCInjector.Utils
         /// </example>
         /// </summary>
         public static double KeepOriginalIfEmptyReplacement(double original, string replacement)
-        {
-            if(replacement == null) replacement = "";
-            
-            return IsTrimmedStringEmpty(replacement) 
+        {            
+            return String.IsNullOrWhiteSpace(replacement) 
                 ? original 
                 : Conversions.StringToDouble(replacement);
         }
