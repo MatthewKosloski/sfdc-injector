@@ -72,7 +72,7 @@ namespace SFDCInjector.Core
                 {"password", this.Password}
             };
         }
-
+        
         /// <summary>
         /// Produces a string of the query parameters used in the
         /// request for an access token.
@@ -109,7 +109,7 @@ namespace SFDCInjector.Core
             {
                 Console.WriteLine("Failed to get an access token from the Salesforce request endpoint.");
                 Console.WriteLine("Provided query parameters:");
-                Console.WriteLine(GetAccessTokenQueryParams());
+                Console.WriteLine(GetAccessTokenQueryParamsString());
                 Console.WriteLine("Request endpoint:");
                 Console.WriteLine(_LoginEndpoint);
                 Console.WriteLine($"{e.GetType()}: {e.Message}");
