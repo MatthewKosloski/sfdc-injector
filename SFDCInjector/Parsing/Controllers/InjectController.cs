@@ -41,7 +41,7 @@ namespace SFDCInjector.Parsing.Controllers
                 cliAuthArgsList.Add(arg.Trim());
 
             bool hasNoAppConfig = ConfigurationManager.AppSettings.Count == 0;
-            bool hasMissingCliArgs = Helpers.HasEmptyTrimmedString(cliAuthArgsList);
+            bool hasMissingCliArgs = Helpers.HasNullOrWhiteSpace(cliAuthArgsList);
 
             if(hasNoAppConfig && hasMissingCliArgs)
             {

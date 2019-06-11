@@ -18,9 +18,9 @@ namespace SFDCInjector.Tests.Utils
         /// Tests the HasEmptyTrimmedString method.
         /// </summary>
         [Test]
-        public void HasEmptyTrimmedStringTest()
+        public void HasNullOrWhiteSpaceTest()
         {
-            // HasEmptyTrimmedString should return true for each of these lists
+            // HasNullOrWhiteSpace should return true for each of these lists
             System.Collections.Generic.List<SystemStringList> isTrueLists 
             = new System.Collections.Generic.List<SystemStringList>{
                 new SystemStringList{"alpha", "beta", null},
@@ -29,17 +29,17 @@ namespace SFDCInjector.Tests.Utils
                 new SystemStringList{"sigma", "pi", "    "}
             };
 
-            // HasEmptyTrimmedString should return false for each of these lists
+            // HasNullOrWhiteSpace should return false for each of these lists
             System.Collections.Generic.List<SystemStringList> isFalseLists 
             = new System.Collections.Generic.List<SystemStringList>{
                 new SystemStringList{"alpha", "beta", "sigma"}
             };
             
             foreach(System.Collections.Generic.List<string> list in isTrueLists)
-                Assert.That(Helpers.HasEmptyTrimmedString(list), Is.True);
+                Assert.That(Helpers.HasNullOrWhiteSpace(list), Is.True);
             
             foreach(System.Collections.Generic.List<string> list in isFalseLists)
-                Assert.That(Helpers.HasEmptyTrimmedString(list), Is.False);
+                Assert.That(Helpers.HasNullOrWhiteSpace(list), Is.False);
         }
 
         /// <summary>

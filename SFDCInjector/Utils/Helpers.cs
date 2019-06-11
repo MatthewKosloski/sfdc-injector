@@ -24,13 +24,13 @@ namespace SFDCInjector.Utils
         /// </summary>
         /// <example>
         /// <code>
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", null}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", ""}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", " "}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", "c"}); // False
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", null}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", ""}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", " "}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", "c"}); // False
         /// </code>
         /// </example>
-        public static bool HasEmptyTrimmedString(List<string> strs)
+        public static bool HasNullOrWhiteSpace(List<string> strs)
         {
             return strs.Exists(str => String.IsNullOrWhiteSpace(str));
         }
