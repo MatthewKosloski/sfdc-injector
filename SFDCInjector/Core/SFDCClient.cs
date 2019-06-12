@@ -43,6 +43,8 @@ namespace SFDCInjector.Core
 
         private static readonly string _LoginEndpoint;
 
+        private static readonly string _GrantType;
+
         private readonly HttpClient _Client;
 
         private string _ApiEndpoint;
@@ -52,6 +54,7 @@ namespace SFDCInjector.Core
         static SFDCClient()
         {
             _LoginEndpoint = "https://login.salesforce.com/services/oauth2/token";
+            _GrantType = "password";
         }
 
         public SFDCClient(HttpClient client)
@@ -65,7 +68,7 @@ namespace SFDCInjector.Core
         private Dictionary<string, string> GetAccessTokenQueryParams()
         {
             return new Dictionary<string, string> {
-                {"grant_type", "password"},
+                {"grant_type", _GrantType},
                 {"client_id", this.ClientId},
                 {"client_secret", this.ClientSecret},
                 {"username", this.Username},
@@ -80,6 +83,15 @@ namespace SFDCInjector.Core
         private bool HasNoLoginEndpoint()
         {
             return String.IsNullOrWhiteSpace(_LoginEndpoint);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `_GrantType`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoGrantType()
+        {
+            return String.IsNullOrWhiteSpace(_GrantType);
         }
 
         /// <summary>
@@ -161,7 +173,7 @@ namespace SFDCInjector.Core
         /// </summary>
         private bool IsInsufficientAccessTokenRequest()
         {
-            return HasNoLoginEndpoint() || HasNoCliendId() || 
+            return HasNoLoginEndpoint() || HasNoGrantType() || HasNoCliendId() || 
             HasNoClientSecret() || HasNoUsername() || HasNoPassword();
         }
 
