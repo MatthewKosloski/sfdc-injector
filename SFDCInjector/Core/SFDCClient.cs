@@ -319,11 +319,6 @@ namespace SFDCInjector.Core
                 Console.WriteLine($"{e.GetType()}: {e.Message}");
                 Console.WriteLine(new StackTrace(true).ToString());
             }
-            catch(EventInjectionUnsuccessfulException e)
-            {
-                Console.WriteLine($"{e.GetType()}: {e.Message}");
-                Console.WriteLine(new StackTrace(true).ToString());
-            }
         }
 
     }
