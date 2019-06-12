@@ -27,9 +27,9 @@ namespace SFDCInjector.Core
 
         public string ClientSecret { get; set; }
 
-        public string AccessToken { get; set; }
+        public string AccessToken { get => _AccessToken; }
 
-        public string InstanceUrl { get; set; }
+        public string InstanceUrl { get => _InstanceUrl; }
 
         public string ApiEndpoint { get => _ApiEndpoint; }
 
@@ -50,6 +50,10 @@ namespace SFDCInjector.Core
         private string _ApiEndpoint;
 
         private double _ApiVersion;
+
+        private string _AccessToken;
+
+        private string _InstanceUrl;
 
         static SFDCClient()
         {
@@ -222,8 +226,8 @@ namespace SFDCInjector.Core
                 AccessTokenResponseBody resObj = SerializerDeserializer
                 .DeserializeJsonToType<AccessTokenResponseBody>(resString);
 
-                this.AccessToken = resObj.AccessToken;
-                this.InstanceUrl = resObj.InstanceUrl;
+                this._AccessToken = resObj.AccessToken;
+                this._InstanceUrl = resObj.InstanceUrl;
 
                 res.EnsureSuccessStatusCode();
             }
