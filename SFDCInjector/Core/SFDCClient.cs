@@ -72,7 +72,110 @@ namespace SFDCInjector.Core
                 {"password", this.Password}
             };
         }
-        
+
+        /// <summary>
+        /// Returns a boolean indicating if `_LoginEndpoint`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoLoginEndpoint()
+        {
+            return String.IsNullOrWhiteSpace(_LoginEndpoint);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `CliendId`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoCliendId()
+        {
+            return String.IsNullOrWhiteSpace(this.ClientId);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `ClientSecret`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoClientSecret()
+        {
+            return String.IsNullOrWhiteSpace(this.ClientSecret);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `Username`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoUsername()
+        {
+            return String.IsNullOrWhiteSpace(this.Username);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `Password`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoPassword()
+        {
+            return String.IsNullOrWhiteSpace(this.Password);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `ApiVersion`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoApiVersion()
+        {
+            return this.ApiVersion == 0;
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `_ApiEndpoint`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoApiEndpoint()
+        {
+            return String.IsNullOrWhiteSpace(_ApiEndpoint);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `InstanceUrl`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoInstanceUrl()
+        {
+            return String.IsNullOrWhiteSpace(this.InstanceUrl);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if `AccessToken`
+        /// is null, empty, or whitespace.
+        /// </summary>
+        private bool HasNoAccessToken()
+        {
+            return String.IsNullOrWhiteSpace(this.AccessToken);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if there is not enough
+        /// information to make a request for an access token 
+        /// (e.g. missing query parameter or invalid uri).
+        /// </summary>
+        private bool IsInsufficientAccessTokenRequest()
+        {
+            return HasNoLoginEndpoint() || HasNoCliendId() || 
+            HasNoClientSecret() || HasNoUsername() || HasNoPassword();
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if there is not enough
+        /// information to inject an event into Salesforce.
+        /// (e.g. missing access token).
+        /// </summary>
+        private bool IsInsufficientEventInjection()
+        {
+            return HasNoInstanceUrl() || HasNoApiVersion() 
+            || HasNoApiEndpoint() || HasNoAccessToken();
+        }
+
         /// <summary>
         /// Produces a string of the query parameters used in the
         /// request for an access token.
@@ -89,9 +192,16 @@ namespace SFDCInjector.Core
         /// Uses a username and password to request an access token and instance url
         /// by making a POST request to the Salesforce token request endpoint. 
         /// <seealso cref="SFDCInjector.InjectEvent()"/>
+        /// <exception cref="SFDCInjector.Exceptions.InsufficientAccessTokenRequestException"></exception>
         /// </summary>
         public async Task RequestAccessToken()
         {
+            if(IsInsufficientAccessTokenRequest())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token. Make sure the query parameters and the Uri are valid and correct.");
+            }
+
             try
             {
                 FormUrlEncodedContent httpContent = new FormUrlEncodedContent(GetAccessTokenQueryParams());
@@ -104,6 +214,11 @@ namespace SFDCInjector.Core
                 this.InstanceUrl = resObj.InstanceUrl;
 
                 res.EnsureSuccessStatusCode();
+            }
+            catch(ArgumentNullException e)
+            {
+                Console.WriteLine("The Url is null.");
+                Console.WriteLine($"{e.GetType()}: {e.Message}");
             }
             catch(HttpRequestException e)
             {
@@ -122,15 +237,34 @@ namespace SFDCInjector.Core
         /// `/services/data/vXX.0/sobjects/Event_Api_Name__e/` endpoint, 
         /// where `XX.0` is `ApiVersion` and `Event_Api_Name__e` is the event's
         /// `ApiName` property.
-        /// <exception cref="SFDCInjector.Exceptions.EventInjectionUnsuccessfulException">
-        /// Thrown when the Success property on the response body is false.
-        /// </exception>
+        /// <exception cref="SFDCInjector.Exceptions.EventInjectionUnsuccessfulException"></exception>
+        /// <exception cref="SFDCInjector.Exceptions.InsufficientEventInjectionException"></exception>
+        /// <exception cref="SFDCInjector.Exceptions.InvalidPlatformEventException"></exception>
         /// <param name="evt">The event to be injected.</param>
         /// <typeparam name="TEventFields">The data type of the event's fields.</typeparam>
         /// </summary>
         public async Task InjectEvent<TEventFields>(IPlatformEvent<TEventFields> evt) 
         where TEventFields : IPlatformEventFields
         {
+
+            bool eventHasNoApiName = String.IsNullOrWhiteSpace(evt.ApiName);
+            bool eventHasNoFields = evt.Fields == null;
+            bool isInvalidPlatformEvent = eventHasNoApiName || eventHasNoFields;
+
+            if(IsInsufficientEventInjection())
+            {
+                throw new InsufficientEventInjectionException("Unable to inject an event into Salesforce. " + 
+                "Make sure to first call SFDCClient.RequestAccessToken to retrieve an access token and " + 
+                "instance url. Also make sure that an ApiVersion has been specified.");
+            }
+
+            if(isInvalidPlatformEvent)
+            {
+                throw new InvalidPlatformEventException("Unable to inject an event into Salesforce. " + 
+                "The supplied platform event is incomplete.  Make sure the platform event " + 
+                "has fields and an api name.");
+            }
+
             try
             {
                 Url reqUri = Url.Combine(this.InstanceUrl, this.ApiEndpoint, "sobjects", evt.ApiName);
