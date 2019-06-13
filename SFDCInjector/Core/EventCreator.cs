@@ -1,5 +1,6 @@
 using SFDCInjector.PlatformEvents;
 using SFDCInjector.Attributes;
+using SFDCInjector.Exceptions;
 using SFDCInjector.Utils;
 using System.Diagnostics;
 using System;
@@ -13,10 +14,13 @@ namespace SFDCInjector.Core
     /// </summary>
     public static class EventCreator
     {
-        private static readonly string _GlobalEventNamespace = "SFDCInjector.PlatformEvents";
+
+        public static string GlobalEventNamespace { get; set; } = "SFDCInjector.PlatformEvents";
 
         /// <summary>
         /// Using Reflection, creates and returns an instance of `eventClassName` as a dynamic type.
+        /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventException"></exception>
+        /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventFieldsException"></exception>
         /// </summary>
         /// <example>
         /// <code>
@@ -28,33 +32,43 @@ namespace SFDCInjector.Core
         {
             dynamic evt = null;
 
-            eventClassName = $"{_GlobalEventNamespace}.{eventClassName}";
-            eventFieldsClassName = $"{_GlobalEventNamespace}.{eventFieldsClassName}";
+            eventClassName = $"{GlobalEventNamespace}.{eventClassName}";
+            eventFieldsClassName = $"{GlobalEventNamespace}.{eventFieldsClassName}";
 
-            try
+            Type eventType = Type.GetType(eventClassName);
+            Type eventFieldsType = Type.GetType(eventFieldsClassName);
+
+            bool isUnknownEventType = eventType == null;
+            bool isUnknownEventFieldsType = eventFieldsType == null;
+
+            if(isUnknownEventType)
             {
-                Type eventFieldsType = Type.GetType(eventFieldsClassName);
-                Type classType = typeof(EventCreator);
-                Type[] typeParameters = new Type[]{eventFieldsType};
-
-                MethodInfo createEventInstance = Helpers.MakeGenericMethod("CreateEventInstance", 
-                classType, typeParameters);
-
-                MethodInfo setEventFieldsProperties = Helpers.MakeGenericMethod("SetEventFieldsProperties", 
-                classType, typeParameters);
-                
-                evt = createEventInstance.Invoke(null, new object[] {
-                    eventClassName, eventFieldsClassName});
-
-                setEventFieldsProperties.Invoke(null, new object[] {
-                    evt.Fields, eventFieldsPropValues});
+                throw new UnknownPlatformEventException("Unable to create the event because the type " + 
+                "of the event class is unknown.  Make sure the string supplied to eventClassName resolves " + 
+                $"to a known type under the namespace {GlobalEventNamespace}.");
             }
-            catch (ArgumentNullException e)
+
+            if(isUnknownEventFieldsType)
             {
-                Console.WriteLine($"{e.GetType()}: Could not make generic method because" + 
-                " the type parameter supplied does not exist.");
-                Console.WriteLine(new StackTrace(true).ToString());
+                throw new UnknownPlatformEventFieldsException("Unable to create the event because the type " + 
+                "of the event fields class is unknown.  Make sure the string supplied to eventFieldsClassName " + 
+                $"resolves to a known type under the namespace {GlobalEventNamespace}.");
             }
+
+            Type classType = typeof(EventCreator);
+            Type[] typeParameters = new Type[]{eventFieldsType};
+
+            MethodInfo createEventInstance = Helpers.MakeGenericMethod("CreateEventInstance", 
+            classType, typeParameters);
+
+            MethodInfo setEventFieldsProperties = Helpers.MakeGenericMethod("SetEventFieldsProperties", 
+            classType, typeParameters);
+            
+            evt = createEventInstance.Invoke(null, new object[] {
+                eventClassName, eventFieldsClassName});
+
+            setEventFieldsProperties.Invoke(null, new object[] {
+                evt.Fields, eventFieldsPropValues});
 
             return evt;
         }
