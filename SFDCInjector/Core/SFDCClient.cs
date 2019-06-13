@@ -171,17 +171,6 @@ namespace SFDCInjector.Core
         }
 
         /// <summary>
-        /// Returns a boolean indicating if there is not enough
-        /// information to make a request for an access token 
-        /// (e.g. missing query parameter or invalid uri).
-        /// </summary>
-        private bool IsInsufficientAccessTokenRequest()
-        {
-            return HasNoLoginEndpoint() || HasNoGrantType() || HasNoCliendId() || 
-            HasNoClientSecret() || HasNoUsername() || HasNoPassword();
-        }
-
-        /// <summary>
         /// Produces a string of the query parameters used in the
         /// request for an access token.
         /// </summary>
@@ -201,10 +190,41 @@ namespace SFDCInjector.Core
         /// </summary>
         public async Task RequestAccessToken()
         {
-            if(IsInsufficientAccessTokenRequest())
+
+            if(HasNoCliendId())
             {
                 throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
-                "token. Make sure the query parameters and the Uri are valid and correct.");
+                "token because there is no CliendId.");
+            }
+
+            if(HasNoClientSecret())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token because there is no ClientSecret.");
+            }
+
+            if(HasNoUsername())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token because there is no Username.");
+            }
+
+            if(HasNoPassword())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token because there is no Password.");
+            }
+
+            if(HasNoLoginEndpoint())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token because there is no LoginEndpoint.");
+            }
+
+            if(HasNoGrantType())
+            {
+                throw new InsufficientAccessTokenRequestException("Unable to request an access " + 
+                "token because there is no GrantType.");
             }
 
             try
