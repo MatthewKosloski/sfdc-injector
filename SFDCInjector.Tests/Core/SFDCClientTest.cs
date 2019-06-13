@@ -1,8 +1,6 @@
 using NUnit.Framework;
 using SFDCInjector.Core;
 using SFDCInjector.Exceptions;
-using SFDCInjector.PlatformEvents;
-using System.Runtime.Serialization;
 using System.Net;
 using System.Net.Http;
 using System;
@@ -16,20 +14,6 @@ namespace SFDCInjector.Tests.Core
     [TestFixture]
     public class SFDCClientTest
     {
-
-        [DataContract]
-        private class TestEventFields : IPlatformEventFields
-        {
-            [DataMember(Name="TestField__c")]
-            public string TestField { get; set; }
-        }
-
-        private class TestEvent: IPlatformEvent<TestEventFields> 
-        {
-            public TestEventFields Fields { get; set; }
-            public string ApiName { get; set; }
-        }
-
         /// <summary>
         /// When requesting for a token, test to make sure that the 
         /// AccessToken property on SFDCClient is set from the response.
