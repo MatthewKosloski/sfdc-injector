@@ -182,17 +182,6 @@ namespace SFDCInjector.Core
         }
 
         /// <summary>
-        /// Returns a boolean indicating if there is not enough
-        /// information to inject an event into Salesforce.
-        /// (e.g. missing access token).
-        /// </summary>
-        private bool IsInsufficientEventInjection()
-        {
-            return HasNoInstanceUrl() || HasNoApiVersion() 
-            || HasNoApiEndpoint() || HasNoAccessToken();
-        }
-
-        /// <summary>
         /// Produces a string of the query parameters used in the
         /// request for an access token.
         /// </summary>
@@ -263,18 +252,31 @@ namespace SFDCInjector.Core
         where TEventFields : IPlatformEventFields
         {
 
+            bool hasNoAccessTokenOrInstanceUrl = HasNoAccessToken() || HasNoInstanceUrl();
+            bool hasNoApiVersionOrApiEndpoint = HasNoApiVersion() || HasNoApiEndpoint();
             bool eventHasNoApiName = String.IsNullOrWhiteSpace(evt.ApiName);
             bool eventHasNoFields = evt.Fields == null;
-            bool isInvalidPlatformEvent = eventHasNoApiName || eventHasNoFields;
 
-            if(IsInsufficientEventInjection())
+            if(hasNoApiVersionOrApiEndpoint)
             {
-                throw new InsufficientEventInjectionException("Unable to inject an event into Salesforce. " + 
-                "Make sure to first call SFDCClient.RequestAccessToken to retrieve an access token and " + 
-                "instance url. Also make sure that an ApiVersion has been specified.");
+                throw new InsufficientEventInjectionException("Unable to inject the event into Salesforce because " + 
+                "there is no ApiVersion.");
             }
 
-            if(isInvalidPlatformEvent)
+            if(hasNoAccessTokenOrInstanceUrl)
+            {
+                throw new InsufficientEventInjectionException("Unable to inject the event into Salesforce because " + 
+                "there is no AccessToken and/or InstanceUrl.  Please call SFDCClient.RequestAccessToken " + 
+                "before attempting to inject events.");
+            }
+
+            if(eventHasNoApiName)
+            {
+                throw new InvalidPlatformEventException("Unable to inject the event into Salesforce because " + 
+                "the ApiName field on the event is null.  Give the event an ApiName and try again.");
+            }
+
+            if(eventHasNoFields)
             {
                 throw new InvalidPlatformEventException("Unable to inject an event into Salesforce. " + 
                 "The supplied platform event is incomplete.  Make sure the platform event " + 
