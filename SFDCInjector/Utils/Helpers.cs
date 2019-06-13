@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Configuration;
-using SFDCInjector.Utils;
 using System.Collections.Generic;
+using System.Reflection;
+using SFDCInjector.Utils;
 
 namespace SFDCInjector.Utils
 {
@@ -69,6 +70,21 @@ namespace SFDCInjector.Utils
             return String.IsNullOrWhiteSpace(replacement) 
                 ? original 
                 : Conversions.StringToDouble(replacement);
+        }
+
+        /// <summary>
+        /// Using reflection, dynamically makes a call to a generic method.
+        /// <param name="methodName">The name of the generic method on `classType`.</param>
+        /// <param name="classType">The name of the class to which the method belongs.</param>
+        /// <param name="typeParameters">The types that are passed into the method as type params.</param>
+        /// <param name="bindingAttrs">Reflection binding flags that describe how to search for the method.</param>
+        /// </summary>
+        public static MethodInfo MakeGenericMethod(string methodName, Type classType, 
+        Type[] typeParameters, BindingFlags bindingAttrs = BindingFlags.NonPublic | BindingFlags.Static)
+        {
+            MethodInfo miMethod = classType.GetMethod(methodName, bindingAttrs);
+            MethodInfo miMethodConstructed = miMethod.MakeGenericMethod(typeParameters);     
+            return miMethodConstructed;
         }
 
     }
