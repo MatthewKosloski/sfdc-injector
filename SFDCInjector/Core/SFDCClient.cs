@@ -298,9 +298,8 @@ namespace SFDCInjector.Core
 
             if(eventHasNoFields)
             {
-                throw new InvalidPlatformEventException("Unable to inject an event into Salesforce. " + 
-                "The supplied platform event is incomplete.  Make sure the platform event " + 
-                "has fields and an api name.");
+                throw new InvalidPlatformEventException("Unable to inject an event into Salesforce because " + 
+                "the event has no fields.");
             }
 
             try
