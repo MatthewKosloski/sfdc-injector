@@ -64,8 +64,7 @@ namespace SFDCInjector.Core
             MethodInfo setEventFieldsProperties = Helpers.MakeGenericMethod("SetEventFieldsProperties", 
             classType, typeParameters);
             
-            evt = createEventInstance.Invoke(null, new object[] {
-                eventClassName, eventFieldsClassName});
+            evt = createEventInstance.Invoke(null, new object[] {eventType, eventFieldsType});
 
             setEventFieldsProperties.Invoke(null, new object[] {
                 evt.Fields, eventFieldsPropValues});
@@ -96,14 +95,12 @@ namespace SFDCInjector.Core
 
         /// <summary>
         /// Dynamically creates an instance of an event with Null Fields.
-        /// <param name="eventClassName">The name of the event class, including namespaces.</param>
-        /// <param name="eventFieldsClassName">The name of the event fields class, including namespaces.</param>
+        /// <param name="eventType">The data type of the event.</param>
+        /// <param name="eventFieldsType">The data type of the event fields.</param>
         /// </summary>
         private static IPlatformEvent<TEventFields> CreateEventInstance<TEventFields>(
-            string eventClassName, string eventFieldsClassName) where TEventFields : IPlatformEventFields
+            Type eventType, Type eventFieldsType) where TEventFields : IPlatformEventFields
         {
-            Type eventType = Type.GetType(eventClassName);
-            Type eventFieldsType = Type.GetType(eventFieldsClassName);
             var eventInstance = (IPlatformEvent<TEventFields>) Activator.CreateInstance(eventType);
             var eventFieldsInstance = (TEventFields) Activator.CreateInstance(eventFieldsType);
             eventInstance.Fields = eventFieldsInstance;
