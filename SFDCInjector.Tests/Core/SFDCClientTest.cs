@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using SFDCInjector.Core;
 using SFDCInjector.Exceptions;
+using SFDCInjector.PlatformEvents.Test;
 using System.Net;
 using System.Net.Http;
 using System;
@@ -187,7 +188,7 @@ namespace SFDCInjector.Tests.Core
             TestEvent evt = new TestEvent {
                 ApiName = "Test_Event_Api_Name__e",
                 Fields = new TestEventFields {
-                    TestField = "TestFieldValue"
+                    StringTestField = "TestFieldValue"
                 }
             };
 
@@ -223,7 +224,7 @@ namespace SFDCInjector.Tests.Core
             TestEvent evt = new TestEvent {
                 ApiName = "Test_Event_Api_Name__e",
                 Fields = new TestEventFields {
-                    TestField = "TestFieldValue"
+                    StringTestField = "TestFieldValue"
                 }
             };
 
@@ -266,7 +267,7 @@ namespace SFDCInjector.Tests.Core
             TestEvent evt = new TestEvent {
                 // should set ApiName to avoid exception
                 Fields = new TestEventFields {
-                    TestField = "TestFieldValue"
+                    StringTestField = "TestFieldValue"
                 }
             };
 
@@ -368,7 +369,7 @@ namespace SFDCInjector.Tests.Core
             TestEvent evt = new TestEvent {
                 ApiName = "Test_Event_Api_Name__e",
                 Fields = new TestEventFields {
-                    TestField = "TestFieldValue"
+                    StringTestField = "TestFieldValue"
                 }
             };
 

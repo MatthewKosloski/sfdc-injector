@@ -1,6 +1,4 @@
-using SFDCInjector.PlatformEvents;
-
-namespace SFDCInjector.Tests.Core
+namespace SFDCInjector.PlatformEvents.Test
 {
     /// <summary>
     /// A Platform Event used in tests.
