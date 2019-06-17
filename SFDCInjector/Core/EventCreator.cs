@@ -2,7 +2,6 @@ using SFDCInjector.PlatformEvents;
 using SFDCInjector.Attributes;
 using SFDCInjector.Exceptions;
 using SFDCInjector.Utils;
-using System.Diagnostics;
 using System;
 using System.Reflection;
 using System.Collections.Generic;
