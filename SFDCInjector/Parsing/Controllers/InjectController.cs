@@ -125,29 +125,35 @@ namespace SFDCInjector.Parsing.Controllers
                         _EventArgs.EventFieldsClassName, 
                         _EventArgs.EventFieldsPropValues);
                 }
-                catch(UnknownPlatformEventException e)
+                catch(Exception e) when (
+                    e is UnknownPlatformEventException || 
+                    e is UnknownPlatformEventFieldsException || 
+                    e is InvalidCommandLineArgumentIndexException)
                 {
                     Console.WriteLine($"{e.GetType()}: {e.Message}");
                 }
-                catch(UnknownPlatformEventFieldsException e)
-                {
-                    Console.WriteLine($"{e.GetType()}: {e.Message}");
-                }
-                catch(InvalidCommandLineArgumentIndexException e)
-                {
-                    Console.WriteLine($"{e.GetType()}: {e.Message}");
-                }
-
+   
                 try
                 {
                     _Client.RequestAccessToken().Wait();
                 }
-                catch(InsufficientAccessTokenRequestException e)
+                catch(Exception e) when (e is InsufficientAccessTokenRequestException)
                 {
                     Console.WriteLine($"{e.GetType()}: {e.Message}");
                 }
         
-                _Client.InjectEvent(evt).Wait();
+                try
+                {
+                    _Client.InjectEvent(evt).Wait();
+                }
+                catch(Exception e) when (
+                    e is InsufficientEventInjectionException || 
+                    e is InvalidPlatformEventException || 
+                    e is EventInjectionUnsuccessfulException)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+                
             }
             catch(RuntimeBinderException e)
             {
