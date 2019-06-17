@@ -50,6 +50,7 @@ namespace SFDCInjector.Core
         /// to a property on the event fields class.</param>
         /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventException"></exception>
         /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventFieldsException"></exception>
+        /// <exception cref="SFDCInjector.Exceptions.InvalidCommandLineArgumentIndexException"></exception>
         /// <remarks>
         /// Below is an example of usage.
         /// </remarks>
