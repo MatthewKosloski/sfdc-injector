@@ -43,9 +43,16 @@ namespace SFDCInjector.Core
 
         /// <summary>
         /// Using Reflection, creates and returns an instance of `eventClassName` as a dynamic type.
+        /// </summary>
+        /// <param name="eventClassName">The name of the event class.</param>
+        /// <param name="eventFieldsClassName">The name of the event fields class.</param>
+        /// <param name="eventFieldsPropValues">An array of objects, where each element is a value assigned 
+        /// to a property on the event fields class.</param>
         /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventException"></exception>
         /// <exception cref="SFDCInjector.Exceptions.UnknownPlatformEventFieldsException"></exception>
-        /// </summary>
+        /// <remarks>
+        /// Below is an example of usage.
+        /// </remarks>
         /// <example>
         /// <code>
         /// CreateEvent("DataCenter.DataCenterNameEvent", "DataCenter.DataCenterNameEventFields", new List&lt;object&gt;{"foo", "123"});
