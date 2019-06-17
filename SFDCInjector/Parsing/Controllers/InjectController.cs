@@ -113,11 +113,45 @@ namespace SFDCInjector.Parsing.Controllers
             _EventArgs = CreateEventArgs(o.EventArgs);
             _Client = CreateClient();
 
-            dynamic evt = EventCreator.CreateEvent(_EventArgs.EventClassName, 
-            _EventArgs.EventFieldsClassName, _EventArgs.EventFieldsPropValues);
+            try
+            {
+                dynamic evt = null;
 
-            _Client.RequestAccessToken().Wait();
-            _Client.InjectEvent(evt).Wait();
+                try
+                {
+                    evt = EventCreator.CreateEvent(
+                        _EventArgs.EventClassName, 
+                        _EventArgs.EventFieldsClassName, 
+                        _EventArgs.EventFieldsPropValues);
+                }
+                catch(UnknownPlatformEventException e)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+                catch(UnknownPlatformEventFieldsException e)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+                catch(InvalidCommandLineArgumentIndexException e)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+
+                try
+                {
+                    _Client.RequestAccessToken().Wait();
+                }
+                catch(InsufficientAccessTokenRequestException e)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+        
+                _Client.InjectEvent(evt).Wait();
+            }
+            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException e)
+            {
+                Console.WriteLine($"{e.GetType()}: No event was bounded to the dynamic type.");
+            }
 
             return 0;
         }
