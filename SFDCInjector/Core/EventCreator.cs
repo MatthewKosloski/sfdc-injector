@@ -132,7 +132,7 @@ namespace SFDCInjector.Core
 
             for(int i = 0; i < evtFieldsPropNames.Length; i++)
             {
-                eventFields = EventCreator.SetEventFieldsProperty(eventFields, 
+                eventFields = SetEventFieldsProperty(eventFields, 
                 evtFieldsPropNames[i], eventFieldsPropValues[i]);
             }  
         }
