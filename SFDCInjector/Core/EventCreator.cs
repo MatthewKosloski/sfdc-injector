@@ -15,7 +15,32 @@ namespace SFDCInjector.Core
     public static class EventCreator
     {
 
-        public static string GlobalEventNamespace { get; set; } = "SFDCInjector.PlatformEvents";
+        private static readonly string _GlobalEventNamespace;
+
+        static EventCreator()
+        {
+            Type baseClassType = typeof(IPlatformEvent<IPlatformEventFields>);
+            string[] baseClassNamespaces = baseClassType.Namespace.Split('.');
+            _GlobalEventNamespace = $"{baseClassNamespaces[0]}.{baseClassNamespaces[1]}";
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if Type is in the same namespace
+        /// as IPlatformEvent, the interface of which all events implement.
+        /// </summary>
+        private static bool IsTypeInGlobalNamespace(Type type)
+        {
+            return type.Namespace.Contains(_GlobalEventNamespace);
+        }
+
+        /// <summary>
+        /// Returns a boolean indicating if Type is null or is
+        /// not in the global namespace.
+        /// </summary>
+        private static bool isUnknownType(Type type)
+        {
+            return type == null || !IsTypeInGlobalNamespace(type);
+        }
 
         /// <summary>
         /// Using Reflection, creates and returns an instance of `eventClassName` as a dynamic type.
@@ -32,31 +57,32 @@ namespace SFDCInjector.Core
         {
             dynamic evt = null;
 
-            eventClassName = $"{GlobalEventNamespace}.{eventClassName}";
-            eventFieldsClassName = $"{GlobalEventNamespace}.{eventFieldsClassName}";
+            eventClassName = $"{_GlobalEventNamespace}.{eventClassName}";
+            eventFieldsClassName = $"{_GlobalEventNamespace}.{eventFieldsClassName}";
 
             Type eventType = Type.GetType(eventClassName);
             Type eventFieldsType = Type.GetType(eventFieldsClassName);
+            Type classType = typeof(EventCreator);
+            Type[] typeParameters = new Type[]{eventFieldsType};
 
-            bool isUnknownEventType = eventType == null;
-            bool isUnknownEventFieldsType = eventFieldsType == null;
+            bool isUnknownEventType = isUnknownType(eventType);
+            bool isUnknownEventFieldsType = isUnknownType(eventFieldsType);
 
             if(isUnknownEventType)
             {
-                throw new UnknownPlatformEventException("Unable to create the event because the type " + 
-                "of the event class is unknown.  Make sure the string supplied to eventClassName resolves " + 
-                $"to a known type under the namespace {GlobalEventNamespace}.");
+                throw new UnknownPlatformEventException("Unable to create the event " + 
+                "because the type of the event class is unknown.  Make sure the " + 
+                "event class name resolves to a known event type " + 
+                $"in the {_GlobalEventNamespace} namespace.");
             }
 
             if(isUnknownEventFieldsType)
             {
-                throw new UnknownPlatformEventFieldsException("Unable to create the event because the type " + 
-                "of the event fields class is unknown.  Make sure the string supplied to eventFieldsClassName " + 
-                $"resolves to a known type under the namespace {GlobalEventNamespace}.");
+                throw new UnknownPlatformEventFieldsException("Unable to create the event " + 
+                "because the type of the event fields class is unknown.  Make sure the " + 
+                "event fields class name resolves to a known event type " + 
+                $"in the {_GlobalEventNamespace} namespace.");
             }
-
-            Type classType = typeof(EventCreator);
-            Type[] typeParameters = new Type[]{eventFieldsType};
 
             MethodInfo createEventInstance = Helpers.MakeGenericMethod("CreateEventInstance", 
             classType, typeParameters);
