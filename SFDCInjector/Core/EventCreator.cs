@@ -84,16 +84,35 @@ namespace SFDCInjector.Core
                 $"in the {_GlobalEventNamespace} namespace.");
             }
 
-            MethodInfo createEventInstance = Helpers.MakeGenericMethod("CreateEventInstance", 
-            classType, typeParameters);
+            // Reflection is used here because the data type of the event fields class
+            // is only known at runtime.
+            try
+            {
+                MethodInfo createEventInstance = Helpers.MakeGenericMethod("CreateEventInstance", 
+                classType, typeParameters);
 
-            MethodInfo setEventFieldsProperties = Helpers.MakeGenericMethod("SetEventFieldsProperties", 
-            classType, typeParameters);
-            
-            evt = createEventInstance.Invoke(null, new object[] {eventType, eventFieldsType});
+                MethodInfo setEventFieldsProperties = Helpers.MakeGenericMethod("SetEventFieldsProperties", 
+                classType, typeParameters);
+                
+                evt = createEventInstance.Invoke(null, new object[] {eventType, eventFieldsType});
 
-            setEventFieldsProperties.Invoke(null, new object[] {
-                evt.Fields, eventFieldsPropValues});
+                setEventFieldsProperties.Invoke(null, new object[] {
+                    evt.Fields, eventFieldsPropValues});
+            }
+            catch(TargetInvocationException e)
+            {
+                Type innerInnerExceptionType = e.InnerException.InnerException.GetType();
+                bool innerInnerExceptionIsOutOfRangeException = innerInnerExceptionType 
+                == typeof(IndexOutOfRangeException);
+
+                if(innerInnerExceptionIsOutOfRangeException)
+                {
+                    throw new InvalidCommandLineArgumentIndexException("Unable to create the event because" + 
+                    $"one or more CommandLineArgumentIndexAttributes in the {eventFieldsType.Name} class has " +
+                    "an Index property that is out of range.  Make sure the Index property is an integer that " + 
+                    "is greater than or equal to zero and less than the total number of properties.");
+                }
+            }
 
             return evt;
         }
@@ -161,34 +180,23 @@ namespace SFDCInjector.Core
         {
             Type eventFieldsType = typeof(TEventFields);
             PropertyInfo[] properties = eventFieldsType.GetProperties();
-
             string[] eventCliProperties = new string[properties.Length];
 
-            try
+            foreach(PropertyInfo property in properties)
             {
-                foreach(PropertyInfo property in properties)
+                object[] attributes = property.GetCustomAttributes(true);
+                foreach(Attribute attribute in attributes)
                 {
-                    object[] attributes = property.GetCustomAttributes(true);
-                    foreach(Attribute attribute in attributes)
+                    bool isCliArgIndexAttribute = attribute.GetType() == 
+                    typeof(CommandLineArgumentIndexAttribute);
+                    if(isCliArgIndexAttribute)
                     {
-                        bool isCliArgIndexAttribute = attribute.GetType() == 
-                        typeof(CommandLineArgumentIndexAttribute);
-                        if(isCliArgIndexAttribute)
-                        {
-                            var cliArgIndexAttribute = (CommandLineArgumentIndexAttribute) attribute;
-                            eventCliProperties[cliArgIndexAttribute.Index] = property.Name;
-                        }
+                        var cliArgIndexAttribute = (CommandLineArgumentIndexAttribute) attribute;
+                        eventCliProperties[cliArgIndexAttribute.Index] = property.Name;
                     }
                 }
             }
-            catch(IndexOutOfRangeException e)
-            {
-                Console.WriteLine($"{e.GetType()}: Failed to add one or more properties to the array. " + 
-                "Ensure every occurence of CommandLineArgumentIndexAttribute has an integer that is less than " + 
-                "or equal to the total number of properties in the class.");
-                Console.WriteLine(new StackTrace(true).ToString());
-            }
-
+        
             return eventCliProperties;
         }
 
