@@ -7,6 +7,7 @@ using SFDCInjector.Exceptions;
 using SFDCInjector.Parsing.Arguments;
 using SFDCInjector.Parsing.Options;
 using SFDCInjector.Core;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace SFDCInjector.Parsing.Controllers
 {
@@ -148,7 +149,7 @@ namespace SFDCInjector.Parsing.Controllers
         
                 _Client.InjectEvent(evt).Wait();
             }
-            catch(Microsoft.CSharp.RuntimeBinder.RuntimeBinderException e)
+            catch(RuntimeBinderException e)
             {
                 Console.WriteLine($"{e.GetType()}: No event was bounded to the dynamic type.");
             }
