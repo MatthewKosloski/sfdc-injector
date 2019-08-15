@@ -9,7 +9,7 @@ namespace SFDCInjector.PlatformEvents.DataCenter
         
         [DataMember(Name="Status_Code__c")]
         [CommandLineArgumentIndex(0)]
-        public int StatusCode { get; set; }
+        public string StatusCode { get; set; }
 
         [DataMember(Name="Data_Center_Id__c")]
         [CommandLineArgumentIndex(1)]

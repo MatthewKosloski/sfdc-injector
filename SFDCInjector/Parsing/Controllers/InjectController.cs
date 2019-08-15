@@ -1,11 +1,13 @@
 using System.Configuration; 
 using System.Collections.Generic;
+using System.Net.Http;
 using System;
 using SFDCInjector.Utils;
 using SFDCInjector.Exceptions;
 using SFDCInjector.Parsing.Arguments;
 using SFDCInjector.Parsing.Options;
 using SFDCInjector.Core;
+using Microsoft.CSharp.RuntimeBinder;
 
 namespace SFDCInjector.Parsing.Controllers
 {
@@ -40,7 +42,7 @@ namespace SFDCInjector.Parsing.Controllers
                 cliAuthArgsList.Add(arg.Trim());
 
             bool hasNoAppConfig = ConfigurationManager.AppSettings.Count == 0;
-            bool hasMissingCliArgs = Helpers.HasEmptyTrimmedString(cliAuthArgsList);
+            bool hasMissingCliArgs = Helpers.HasNullOrWhiteSpace(cliAuthArgsList);
 
             if(hasNoAppConfig && hasMissingCliArgs)
             {
@@ -91,14 +93,14 @@ namespace SFDCInjector.Parsing.Controllers
         /// </summary>
         private SFDCClient CreateClient() 
         {
-            return new SFDCClient 
-            {
-                ClientId = _AuthArgs.ClientId,
-                ClientSecret = _AuthArgs.ClientSecret,
-                Username = _AuthArgs.Username,
-                Password = _AuthArgs.Password,
-                ApiVersion = _AuthArgs.ApiVersion
-            };
+            SFDCClient client = new SFDCClient(new HttpClient());
+            client.ClientId = _AuthArgs.ClientId;
+            client.ClientSecret = _AuthArgs.ClientSecret;
+            client.Username = _AuthArgs.Username;
+            client.Password = _AuthArgs.Password;
+            client.ApiVersion = _AuthArgs.ApiVersion;
+
+            return client;
         }
 
         /// <summary>
@@ -112,11 +114,51 @@ namespace SFDCInjector.Parsing.Controllers
             _EventArgs = CreateEventArgs(o.EventArgs);
             _Client = CreateClient();
 
-            dynamic evt = EventCreator.CreateEvent(_EventArgs.EventClassName, 
-            _EventArgs.EventFieldsClassName, _EventArgs.EventFieldsPropValues);
+            try
+            {
+                dynamic evt = null;
 
-            _Client.RequestAccessToken().Wait();
-            _Client.InjectEvent(evt).Wait();
+                try
+                {
+                    evt = EventCreator.CreateEvent(
+                        _EventArgs.EventClassName, 
+                        _EventArgs.EventFieldsClassName, 
+                        _EventArgs.EventFieldsPropValues);
+                }
+                catch(Exception e) when (
+                    e is UnknownPlatformEventException || 
+                    e is UnknownPlatformEventFieldsException || 
+                    e is InvalidCommandLineArgumentIndexException)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+   
+                try
+                {
+                    _Client.RequestAccessToken().Wait();
+                }
+                catch(Exception e) when (e is InsufficientAccessTokenRequestException)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+        
+                try
+                {
+                    _Client.InjectEvent(evt).Wait();
+                }
+                catch(Exception e) when (
+                    e is InsufficientEventInjectionException || 
+                    e is InvalidPlatformEventException || 
+                    e is EventInjectionUnsuccessfulException)
+                {
+                    Console.WriteLine($"{e.GetType()}: {e.Message}");
+                }
+                
+            }
+            catch(RuntimeBinderException e)
+            {
+                Console.WriteLine($"{e.GetType()}: No event was bounded to the dynamic type.");
+            }
 
             return 0;
         }

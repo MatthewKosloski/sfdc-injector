@@ -1,8 +1,9 @@
 using System;
 using System.Diagnostics;
 using System.Configuration;
-using SFDCInjector.Utils;
 using System.Collections.Generic;
+using System.Reflection;
+using SFDCInjector.Utils;
 
 namespace SFDCInjector.Utils
 {
@@ -17,52 +18,22 @@ namespace SFDCInjector.Utils
     /// </summary>
     public static class Helpers
     {
-        
+
         /// <summary>
-        /// Returns a boolean indicating if `str`,
-        /// after being trimmed, is Empty.  
+        /// Returns a boolean indicating if a list of strings 
+        /// contains one or more elements that are either null, empty, or whitespace.
         /// </summary>
         /// <example>
         /// <code>
-        /// IsTrimmedStringEmpty(null); // True
-        /// IsTrimmedStringEmpty(""); // True
-        /// IsTrimmedStringEmpty(" "); // True
-        /// IsTrimmedStringEmpty("hello"); // False
-        /// IsTrimmedStringEmpty(" hello "); // False
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", null}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", ""}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", " "}); // True
+        /// HasNullOrWhiteSpace(new List&lt;string&gt;{"a", "b", "c"}); // False
         /// </code>
         /// </example>
-        public static bool IsTrimmedStringEmpty(string str)
+        public static bool HasNullOrWhiteSpace(List<string> strs)
         {
-            if(str == null) str = "";
-            return String.IsNullOrEmpty(str.Trim());
-        }
-
-        /// <summary>
-        /// Loops through a list of strings and returns a boolean 
-        /// indicating if the list contains a trimmed, empty string.
-        /// </summary>
-        /// <example>
-        /// <code>
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", null}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", ""}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", " "}); // True
-        /// HasEmptyTrimmedString(new List&lt;string&gt;{"a", "b", "c"}); // False
-        /// </code>
-        /// </example>
-        public static bool HasEmptyTrimmedString(List<string> strs)
-        {
-            bool result = false;
-
-            foreach(string str in strs)
-            {
-                if (IsTrimmedStringEmpty(str))
-                {
-                    result = true;
-                    break;
-                }
-            }
-
-            return result;
+            return strs.Exists(str => String.IsNullOrWhiteSpace(str));
         }
 
         /// <summary>
@@ -79,8 +50,7 @@ namespace SFDCInjector.Utils
         /// </summary>
         public static string KeepOriginalIfEmptyReplacement(string original, string replacement)
         {
-            if(replacement == null) replacement = "";
-            return IsTrimmedStringEmpty(replacement) ? original : replacement;
+            return String.IsNullOrWhiteSpace(replacement) ? original : replacement;
         }
 
         /// <summary>
@@ -96,12 +66,25 @@ namespace SFDCInjector.Utils
         /// </example>
         /// </summary>
         public static double KeepOriginalIfEmptyReplacement(double original, string replacement)
-        {
-            if(replacement == null) replacement = "";
-            
-            return IsTrimmedStringEmpty(replacement) 
+        {            
+            return String.IsNullOrWhiteSpace(replacement) 
                 ? original 
                 : Conversions.StringToDouble(replacement);
+        }
+
+        /// <summary>
+        /// Using reflection, dynamically makes a call to a generic method.
+        /// <param name="methodName">The name of the generic method on `classType`.</param>
+        /// <param name="classType">The name of the class to which the method belongs.</param>
+        /// <param name="typeParameters">The types that are passed into the method as type params.</param>
+        /// <param name="bindingAttrs">Reflection binding flags that describe how to search for the method.</param>
+        /// </summary>
+        public static MethodInfo MakeGenericMethod(string methodName, Type classType, 
+        Type[] typeParameters, BindingFlags bindingAttrs = BindingFlags.NonPublic | BindingFlags.Static)
+        {
+            MethodInfo miMethod = classType.GetMethod(methodName, bindingAttrs);
+            MethodInfo miMethodConstructed = miMethod.MakeGenericMethod(typeParameters);     
+            return miMethodConstructed;
         }
 
     }

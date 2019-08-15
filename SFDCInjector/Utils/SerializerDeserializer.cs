@@ -4,10 +4,15 @@ using System.Runtime.Serialization.Json;
 
 namespace SFDCInjector.Utils
 {
+    /// <summary>
+    /// Includes helper methods to serialize an object into a JSON 
+    /// string and deserialize a JSON string into an object.
+    /// </summary>
     public class SerializerDeserializer
     {
-
-        // Deserializes a JSON string into an instance of type T.
+        /// <summary>
+        /// Deserializes a JSON string into an instance of type T.
+        /// </summary>
         public static T DeserializeJsonToType<T>(string json) where T : class, new()
         {
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(json)))
@@ -19,7 +24,9 @@ namespace SFDCInjector.Utils
             }
         }
 
-        // Serializes an instance of Type T into a JSON string.
+        /// <summary>
+        /// Serializes an instance of Type T into a JSON string.
+        /// </summary>
         public static string SerializeTypeToJson<T>(T obj)
         {
             using (MemoryStream stream = new MemoryStream())

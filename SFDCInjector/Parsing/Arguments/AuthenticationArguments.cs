@@ -36,7 +36,7 @@ namespace SFDCInjector.Parsing.Arguments
 
                 if(hasAppConfig)
                 {
-                    bool hasMissingSettings = Helpers.HasEmptyTrimmedString(new List<string> {
+                    bool hasMissingSettings = Helpers.HasNullOrWhiteSpace(new List<string> {
                         appSettings[_ClientIdConfigKey],
                         appSettings[_ClientSecretConfigKey],
                         appSettings[_UsernameConfigKey],

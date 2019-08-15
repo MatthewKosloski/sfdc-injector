@@ -2,6 +2,9 @@ using System;
 
 namespace SFDCInjector.Exceptions
 {
+    /// <summary>
+    /// Thrown when an App.config file exists, but it is missing one or more settings.
+    /// </summary>
     public class InvalidAppConfigException : Exception
     {
         public InvalidAppConfigException()

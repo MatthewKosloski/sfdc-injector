@@ -7,7 +7,8 @@ namespace SFDCInjector
 
     class Program
     {
-        static int Main(string[] args) {
+        static int Main(string[] args)
+        {
             InjectController injectController = new InjectController();
             AboutController aboutController = new AboutController();
 
